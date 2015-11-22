@@ -1,0 +1,11 @@
+{
+  "name": "js-module-starter-kit",
+  "version": "0.0.0",
+  "description": "JS module starter kit — a skeleton of an JavaScript module.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zmoki/js-module-starter-kit.git"
+  },
+  "author": "Zarema Khalilova",9
+  "homepage": "https://github.com/Zmoki/js-module-starter-kit"
+}
