@@ -1,10 +1,8 @@
-'use strict';
+import expect from "expect";
+import sample from "../src/sample";
 
-import expect from 'expect';
-import sample from '../src/sample';
-
-describe('Sample', ()=>{
-  it('return true', ()=>{
+describe("Sample", ()=>{
+  it("return true", ()=>{
     expect(sample()).toBe(true);
   })
 });

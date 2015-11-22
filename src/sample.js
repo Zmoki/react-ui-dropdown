@@ -1,5 +1,3 @@
-'use strict';
-
-export default function sample(){
+export default function sample() {
   return true;
 }

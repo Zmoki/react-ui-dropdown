@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "description": "JS module starter kit — a skeleton of an JavaScript module.",
   "scripts": {
+    "lint": "eslint src test",
     "test": "mocha --compilers js:babel-core/register",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "check": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
@@ -15,6 +17,7 @@
   "devDependencies": {
     "babel-core": "^6.2.1",
     "babel-preset-es2015": "^6.1.18",
+    "eslint": "^1.10.1",
     "expect": "^1.13.0",
     "mocha": "^2.3.4"
   }

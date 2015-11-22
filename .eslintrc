@@ -1,0 +1,10 @@
+{
+  "ecmaFeatures": {
+    "modules": true,
+    "arrowFunctions": true
+  },
+  "rules": {
+    "strict": [2, "global"],
+    "quotes": [2, "double"]
+  }
+}
