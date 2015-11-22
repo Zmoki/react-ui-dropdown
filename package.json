@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "JS module starter kit — a skeleton of an JavaScript module.",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register"
+    "test": "mocha --compilers js:babel-core/register",
+    "test:watch": "npm run test -- --watch"
   },
   "repository": {
     "type": "git",
