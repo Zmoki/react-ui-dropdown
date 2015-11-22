@@ -2,6 +2,9 @@
   "name": "js-module-starter-kit",
   "version": "0.0.0",
   "description": "JS module starter kit — a skeleton of an JavaScript module.",
+  "scripts": {
+    "test": "mocha --compilers js:babel-core/register"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Zmoki/js-module-starter-kit.git"
@@ -10,6 +13,8 @@
   "homepage": "https://github.com/Zmoki/js-module-starter-kit",
   "devDependencies": {
     "babel-core": "^6.2.1",
-    "babel-preset-es2015": "^6.1.18"
+    "babel-preset-es2015": "^6.1.18",
+    "expect": "^1.13.0",
+    "mocha": "^2.3.4"
   }
 }
