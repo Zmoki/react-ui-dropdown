@@ -23,6 +23,8 @@
     "build:dist": "webpack src/index.js --config webpack.config.development.js",
     "build:dist:min": "webpack src/index.js --config webpack.config.production.js",
     "build": "npm run build:lib && npm run build:dist && npm run build:dist:min",
+    "preversion": "npm run clean && npm run check",
+    "version": "npm run build",
     "prepublish": "npm run clean && npm run build"
   },
   "repository": {
