@@ -1,20 +1,20 @@
 {
-  "name": "js-module-starter-kit-example",
+  "name": "sexy-dropdown-example",
   "version": "0.0.0",
-  "description": "Example for JS module starter kit.",
+  "description": "Example for Sexy Dropdown.",
   "main": "index.js",
   "scripts": {
     "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Zmoki/js-module-starter-kit.git"
+    "url": "https://github.com/Zmoki/sexy-dropdown.git"
   },
   "author": "Zarema Khalilova",
   "license": "MIT",
-  "homepage": "https://github.com/Zmoki/js-module-starter-kit",
+  "homepage": "https://github.com/Zmoki/sexy-dropdown",
   "dependencies": {
-    "js-module-starter-kit": "0.0.0"
+    "sexy-dropdown": "0.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.2.1",

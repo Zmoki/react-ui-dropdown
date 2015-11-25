@@ -1,4 +1,4 @@
-# js-module-starter-kit
-JS module starter kit — a skeleton of an JavaScript module with babel, webpack, mocha.
+# sexy-dropdown
+Sexy Dropdown — dropdown like in vk.com.
 
-[![Build Status](https://travis-ci.org/Zmoki/js-module-starter-kit.svg)](https://travis-ci.org/Zmoki/js-module-starter-kit)
+[![Build Status](https://travis-ci.org/Zmoki/sexy-dropdown.svg)](https://travis-ci.org/Zmoki/sexy-dropdown)

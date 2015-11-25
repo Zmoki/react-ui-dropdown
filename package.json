@@ -1,8 +1,8 @@
 {
-  "name": "js-module-starter-kit",
+  "name": "sexy-dropdown",
   "config": {
-    "name": "js-module-starter-kit",
-    "library": "JSModuleStarterKit"
+    "name": "sexy-dropdown",
+    "library": "SexyDropdown"
   },
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -12,7 +12,7 @@
     "src"
   ],
   "version": "0.1.0",
-  "description": "JS module starter kit — a skeleton of an JavaScript module.",
+  "description": "Sexy Dropdown — dropdown like in vk.com.",
   "scripts": {
     "clean": "rimraf lib dist",
     "lint": "eslint src test",
@@ -29,11 +29,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Zmoki/js-module-starter-kit.git"
+    "url": "https://github.com/Zmoki/sexy-dropdown.git"
   },
   "author": "Zarema Khalilova",
   "license": "MIT",
-  "homepage": "https://github.com/Zmoki/js-module-starter-kit",
+  "homepage": "https://github.com/Zmoki/sexy-dropdown",
   "devDependencies": {
     "babel-cli": "^6.2.0",
     "babel-core": "^6.2.1",
@@ -45,7 +45,7 @@
     "rimraf": "^2.4.4",
     "webpack": "^1.12.9"
   },
-  "npmName": "js-module-starter-kit",
+  "npmName": "sexy-dropdown",
   "npmFileMap": [
     {
       "basePath": "/dist/",

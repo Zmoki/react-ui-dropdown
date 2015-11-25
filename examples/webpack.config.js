@@ -31,18 +31,18 @@ module.exports = {
 };
 
 
-// When inside js-module-starter-kit repo, prefer src to compiled version.
+// When inside sexy-dropdown repo, prefer src to compiled version.
 // You can safely delete these lines in your project.
-var jsModuleStarterKitSrc = path.join(__dirname, "..", "src");
-var jsModuleStarterKitNodeModules = path.join(__dirname, "..", "node_modules");
+var sexyDropdownSrc = path.join(__dirname, "..", "src");
+var sexyDropdownNodeModules = path.join(__dirname, "..", "node_modules");
 var fs = require("fs");
-if (fs.existsSync(jsModuleStarterKitSrc) && fs.existsSync(jsModuleStarterKitNodeModules)) {
-  // Resolve js-module-starter-kit to source
-  module.exports.resolve = { alias: { "js-module-starter-kit": jsModuleStarterKitSrc } };
-  // Compile js-module-starter-kit from source
+if (fs.existsSync(sexyDropdownSrc) && fs.existsSync(sexyDropdownNodeModules)) {
+  // Resolve sexy-dropdown to source
+  module.exports.resolve = { alias: { "sexy-dropdown": sexyDropdownSrc } };
+  // Compile sexy-dropdown from source
   module.exports.module.loaders.push({
     test: /\.js$/,
     loaders: ["babel"],
-    include: jsModuleStarterKitSrc
+    include: sexyDropdownSrc
   })
 }

@@ -1,4 +1,4 @@
-import { sample } from "js-module-starter-kit";
+import { sample } from "sexy-dropdown";
 
 
 console.log(sample());
