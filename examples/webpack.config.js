@@ -30,7 +30,7 @@ module.exports = {
   }
 };
 
-/*
+
 // When inside js-module-starter-kit repo, prefer src to compiled version.
 // You can safely delete these lines in your project.
 var jsModuleStarterKitSrc = path.join(__dirname, "..", "src");
@@ -45,4 +45,4 @@ if (fs.existsSync(jsModuleStarterKitSrc) && fs.existsSync(jsModuleStarterKitNode
     loaders: ["babel"],
     include: jsModuleStarterKitSrc
   })
-}*/
+}
