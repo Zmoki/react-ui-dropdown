@@ -53,5 +53,8 @@
         "*.js"
       ]
     }
-  ]
+  ],
+  "dependencies": {
+    "convert-layout": "^0.4.1"
+  }
 }

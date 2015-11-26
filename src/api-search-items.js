@@ -1,34 +1,36 @@
-function APISearchItems(JSONSource){
-  let items = require(JSONSource).items;
+import wordsChecker from './words-checker';
 
-  function stringContainWord(str, word){
-    str = str.toLowerCase();
-    word = word.toLowerCase();
-
-    return str.search(word) != -1;
-  }
+function APISearchItems(JSONSource) {
+  let items = JSONSource ? require(JSONSource).items : [];
 
   function getItems(word) {
     let resultItems;
 
-    if(word){
-      resultItems = items.filter(item=>{
+    if (word) {
+      let words = wordsChecker.getConditionalWords(word);
+
+      resultItems = items.filter(item=> {
         let hasWord = false;
 
-        for(let field in item){
-          if((typeof item[field] == 'string') && stringContainWord(item[field], word)){
-            hasWord = true;
-            break;
+        for (let field in item) {
+          if (typeof item[field] == 'string') {
+            let iv = item[field].toLowerCase();
+            for(let i = 0; i < words.length; i++){
+              if(iv.search(words[i]) != -1){
+                hasWord = true;
+                break;
+              }
+            }
           }
         }
 
         return hasWord;
       });
-    } else{
+    } else {
       resultItems = items;
     }
 
-    return resultItems.map(item=>{
+    return resultItems.map(item=> {
       return {
         uid: item.uid,
         firstName: item["first_name"],
