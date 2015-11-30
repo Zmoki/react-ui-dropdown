@@ -7,6 +7,10 @@ describe("APIAPISearchItems", ()=> {
       expect(APISearchItems.getItems().length).toBeGreaterThan(0);
     });
 
+    it("with length options return the same number of items", ()=> {
+      expect(APISearchItems.getItems(null, 10).length).toBe(10);
+    });
+
     it("return items, which fields doesn't contain domain", ()=> {
       let fields = {};
       let items = APISearchItems.getItems();

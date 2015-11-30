@@ -3,7 +3,7 @@ import wordsChecker from './words-checker';
 import { items } from './data/items';
 
 const APISearchItems = {
-  getItems(word){
+  getItems(word, length){
     let resultItems;
 
     if (word) {
@@ -28,6 +28,10 @@ const APISearchItems = {
       });
     } else {
       resultItems = items;
+    }
+
+    if(length){
+      resultItems = resultItems.slice(0, length);
     }
 
     return resultItems.map(item=> {
