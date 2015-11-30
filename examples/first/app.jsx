@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { DDItem } from "sexy-dropdown";
+import { APISearchItems, SexyDropdown } from "sexy-dropdown";
 
 let app = {
   run() {
+    const items = APISearchItems.getItems("Иван");
+
     ReactDOM.render(
-      <DDItem />,
+      <SexyDropdown
+        items={items}/>,
       document.getElementById('root')
     );
   }

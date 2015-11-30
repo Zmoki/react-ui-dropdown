@@ -1,5 +1,7 @@
-import DDItem from "./components/DDItem.jsx";
+import SexyDropdown from "./components/SexyDropdown.jsx";
+import APISearchItems from "./api-search-items";
 
 export {
-  DDItem
+  APISearchItems,
+  SexyDropdown
 }
