@@ -4,11 +4,13 @@ import { APISearchItems, SexyDropdown } from "sexy-dropdown";
 
 let app = {
   run() {
-    const items = APISearchItems.getItems("Иван");
+    const items = APISearchItems.getItems("Иван", 10);
+    const selectedItems = [];
 
     ReactDOM.render(
       <SexyDropdown
-        items={items}/>,
+        items={items}
+        selectedItems={selectedItems}/>,
       document.getElementById('root')
     );
   }
