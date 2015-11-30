@@ -1,5 +1,5 @@
-import sample from "./sample";
+import DDItem from "./components/DDItem.jsx";
 
 export {
-  sample
+  DDItem
 }
