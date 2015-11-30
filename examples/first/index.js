@@ -1,4 +1,3 @@
-import { sample } from "sexy-dropdown";
+import app from './app.jsx';
 
-
-console.log(sample());
+app.run();

@@ -22,8 +22,8 @@ module.exports = {
   ],
   module: {
     loaders: [{
-      test: /\.js$/,
-      loaders: ["babel", "webpack-module-hot-accept"],
+      test: [/\.jsx$/, /\.js$/],
+      loaders: ["babel?presets[]=react,presets[]=es2015", "webpack-module-hot-accept"],
       exclude: /node_modules/,
       include: __dirname
     }]
@@ -41,8 +41,19 @@ if (fs.existsSync(sexyDropdownSrc) && fs.existsSync(sexyDropdownNodeModules)) {
   module.exports.resolve = { alias: { "sexy-dropdown": sexyDropdownSrc } };
   // Compile sexy-dropdown from source
   module.exports.module.loaders.push({
+    test: /\.jsx$/,
+    include: sexyDropdownSrc,
+    loader: "babel",
+    query: {
+      presets: ["react", "es2015"]
+    }
+  });
+  module.exports.module.loaders.push({
     test: /\.js$/,
-    loaders: ["babel"],
-    include: sexyDropdownSrc
-  })
+    include: sexyDropdownSrc,
+    loader: "babel",
+    query: {
+      presets: ["es2015"]
+    }
+  });
 }
