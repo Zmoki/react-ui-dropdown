@@ -1,9 +1,9 @@
 import wordsChecker from './words-checker';
 
-function APISearchItems(JSONSource) {
-  let items = JSONSource ? require(JSONSource).items : [];
+import { items } from './data/items';
 
-  function getItems(word) {
+const APISearchItems = {
+  getItems(word){
     let resultItems;
 
     if (word) {
@@ -39,10 +39,6 @@ function APISearchItems(JSONSource) {
       }
     });
   }
-
-  return {
-    getItems
-  };
-}
+};
 
 export default APISearchItems;
