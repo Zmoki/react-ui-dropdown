@@ -8,7 +8,8 @@ let app = {
 
     ReactDOM.render(
       <SexyDropdown
-        items={items}/>,
+        items={items}
+        maxDisplayedItems="5"/>,
       document.getElementById('root')
     );
   }

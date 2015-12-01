@@ -9,11 +9,13 @@ export default class SexyDropdown extends Component {
   constructor(props) {
     super(props);
 
+    let maxDisplayedItems = this.props.maxDisplayedItems || 10;
     let items = this.props.items;
-    let displayedItems = Object.keys(items).slice(0, 10);
+    let displayedItems = Object.keys(items).slice(0, maxDisplayedItems);
 
     this.state = {
       items,
+      maxDisplayedItems,
       displayedItems,
       selectedItems: [],
       searchValue: ''
@@ -43,7 +45,7 @@ export default class SexyDropdown extends Component {
   goSearch(e){
     let displayedItems;
     if(!e.target.value){
-      displayedItems = Object.keys(this.state.items).slice(0, 10);
+      displayedItems = Object.keys(this.state.items).slice(0, this.state.maxDisplayedItems);
     } else{
       displayedItems = [];
       let words = wordsChecker.getConditionalWords(e.target.value);
@@ -65,7 +67,7 @@ export default class SexyDropdown extends Component {
           }
         }
       }
-      displayedItems = displayedItems.slice(0, 10);
+      displayedItems = displayedItems.slice(0, this.state.maxDisplayedItems);
     }
 
     this.setState({
@@ -114,5 +116,6 @@ export default class SexyDropdown extends Component {
 }
 
 SexyDropdown.propTypes = {
-  items: PropTypes.object
+  items: PropTypes.object,
+  maxDisplayedItems: PropTypes.number
 };
