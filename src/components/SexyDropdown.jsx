@@ -20,14 +20,20 @@ export default class SexyDropdown extends Component {
       displayedItems,
       selectedItems: [],
       searchValue: '',
-      showDisplayedItems: false
+      showDisplayedItems: false,
+      multiple: this.props.multiple !== false
     };
   }
 
   addItemToSelected(itemKey) {
-    let s = this.state.selectedItems;
+    let s;
+    if(this.state.multiple) {
+      s = this.state.selectedItems;
 
-    s.push(itemKey);
+      s.push(itemKey);
+    } else{
+      s = [itemKey];
+    }
 
     this.setState({
       selectedItems: s
@@ -125,5 +131,6 @@ export default class SexyDropdown extends Component {
 
 SexyDropdown.propTypes = {
   items: PropTypes.object,
-  maxDisplayedItems: PropTypes.number
+  maxDisplayedItems: PropTypes.number,
+  multiple: PropTypes.boolean
 };
