@@ -34,14 +34,15 @@ const APISearchItems = {
       resultItems = resultItems.slice(0, length);
     }
 
-    return resultItems.map(item=> {
-      return {
-        uid: item.uid,
-        firstName: item["first_name"],
-        lastName: item["last_name"],
-        photo: item["photo_50"]
-      }
-    });
+    return resultItems.reduce((obj, item) => {
+      obj[item.uid] = {
+        id: item.uid,
+        title: [item["first_name"], item["last_name"]].join(" "),
+        image: item["photo_50"]
+      };
+
+      return obj;
+    }, {});
   }
 };
 
