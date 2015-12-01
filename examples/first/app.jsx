@@ -7,9 +7,15 @@ let app = {
     const items = APISearchItems.getItems();
 
     ReactDOM.render(
-      <SexyDropdown
-        items={items}
-        maxDisplayedItems={5}/>,
+      <div>
+        <SexyDropdown
+          items={items}
+          maxDisplayedItems={5}/>
+        <SexyDropdown
+          items={items}
+          maxDisplayedItems={2}
+          multiple={false}/>
+      </div>,
       document.getElementById('root')
     );
   }
