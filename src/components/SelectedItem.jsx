@@ -5,7 +5,10 @@ export default class SelectedItem extends Component {
     const { title } = this.props;
 
     return (
-      <div>{title}</div>
+      <div>
+        {title}
+        <button onClick={this.props.onSelectedItemClick}>x</button>
+      </div>
     )
   }
 }

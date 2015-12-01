@@ -7,59 +7,73 @@ export default class SexyDropdown extends Component {
   constructor(props) {
     super(props);
 
+    let items = this.props.items;
+    let displayedItems = Object.keys(items).slice(0, 10);
+
     this.state = {
-      items: this.props.items,
-      selectedItems: this.props.selectedItems
+      items,
+      displayedItems,
+      selectedItems: []
     };
   }
 
-  addItemToSelected(itemIndex) {
+  addItemToSelected(itemKey) {
     let s = this.state.selectedItems;
 
-    s.push(this.state.items[itemIndex]);
-
-    let i = this.state.items;
-
-    i[itemIndex].selected = true;
+    s.push(itemKey);
 
     this.setState({
-      items: i,
+      selectedItems: s
+    });
+  }
+
+  removeItemFromSelected(itemKey) {
+    let s = this.state.selectedItems;
+
+    s.splice(s.indexOf(itemKey), 1);
+
+    this.setState({
       selectedItems: s
     });
   }
 
   render() {
-    const { items, selectedItems } = this.state;
+    const { items, displayedItems, selectedItems } = this.state;
 
     return (
       <div>
         <Selector>
-          {selectedItems.map(selectedItem =>
-          <SelectedItem
-            key={selectedItem.uid}
-            title={[selectedItem.firstName, selectedItem.lastName].join(" ")}/>
-            )}
+          {
+            selectedItems.map(itemKey => {
+              let item = items[itemKey];
+
+              return (
+              <SelectedItem
+                key={item.id}
+                title={item.title}
+                onSelectedItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>);
+              })
+          }
         </Selector>
 
         <h2>Items</h2>
-        {items.map((item, i)=> {
-          if(!item.selected){
+        {
+          displayedItems.filter(itemKey => !~selectedItems.indexOf(itemKey)).map(itemKey=> {
+            let item = items[itemKey];
+
             return (
             <Item
-              key={item.uid}
-              image={item.photo}
-              title={[item.firstName, item.lastName].join(" ")}
-              onItemClick={this.addItemToSelected.bind(this, i)}/>
-              )
-            }
-          }
-          )}
+              key={item.id}
+              image={item.image}
+              title={item.title}
+              onItemClick={this.addItemToSelected.bind(this, itemKey)}/>);
+          })
+        }
       </div>
     )
   }
 }
 
 SexyDropdown.propTypes = {
-  selectedItems: PropTypes.array,
   items: PropTypes.array
 };
