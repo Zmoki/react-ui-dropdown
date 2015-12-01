@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from "react";
+import Items from "./Items.jsx";
 import Item from "./Item.jsx";
 import Selector from "./Selector.jsx";
 import SelectedItem from "./SelectedItem.jsx";
@@ -18,7 +19,8 @@ export default class SexyDropdown extends Component {
       maxDisplayedItems,
       displayedItems,
       selectedItems: [],
-      searchValue: ''
+      searchValue: '',
+      showDisplayedItems: false
     };
   }
 
@@ -42,30 +44,30 @@ export default class SexyDropdown extends Component {
     });
   }
 
-  goSearch(e){
+  goSearch(e) {
     let displayedItems;
-    if(!e.target.value){
+    if (!e.target.value) {
       displayedItems = Object.keys(this.state.items).slice(0, this.state.maxDisplayedItems);
-    } else{
+    } else {
       displayedItems = [];
       let words = wordsChecker.getConditionalWords(e.target.value);
 
-      for(let itemKey in this.state.items){
+      for (let itemKey in this.state.items) {
         let item = this.state.items[itemKey];
 
         loopFields:
-        for(let field in item){
-          if(typeof item[field] == "string"){
-            let value = item[field].toLowerCase();
+          for (let field in item) {
+            if (typeof item[field] == "string") {
+              let value = item[field].toLowerCase();
 
-            for(let i = 0; i < words.length; i++){
-              if(~value.search(words[i])){
-                displayedItems.push(itemKey);
-                break loopFields;
+              for (let i = 0; i < words.length; i++) {
+                if (~value.search(words[i])) {
+                  displayedItems.push(itemKey);
+                  break loopFields;
+                }
               }
             }
           }
-        }
       }
       displayedItems = displayedItems.slice(0, this.state.maxDisplayedItems);
     }
@@ -76,6 +78,16 @@ export default class SexyDropdown extends Component {
     });
   }
 
+  toggleItems(){
+    let showDisplayedItems = this.state.showDisplayedItems;
+
+    showDisplayedItems = !showDisplayedItems;
+
+    this.setState({
+      showDisplayedItems
+    });
+  }
+
   render() {
     const { items, displayedItems, selectedItems } = this.state;
 
@@ -83,7 +95,8 @@ export default class SexyDropdown extends Component {
       <div>
         <Selector
           searchValue={this.state.searchValue}
-          handleChangeSearchValue={this.goSearch.bind(this)}>
+          handleChangeSearchValue={this.goSearch.bind(this)}
+          handleSearchInputFocus={this.toggleItems.bind(this)}>
           {
             selectedItems.map(itemKey => {
               let item = items[itemKey];
@@ -91,25 +104,20 @@ export default class SexyDropdown extends Component {
               return (
               <SelectedItem
                 key={item.id}
-                title={item.title}
+                {...item}
                 onSelectedItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>);
               })
-          }
+            }
         </Selector>
 
-        <h2>Items</h2>
-        {
-          displayedItems.filter(itemKey => !~selectedItems.indexOf(itemKey)).map(itemKey=> {
-            let item = items[itemKey];
-
-            return (
-            <Item
-              key={item.id}
-              image={item.image}
-              title={item.title}
-              onItemClick={this.addItemToSelected.bind(this, itemKey)}/>);
-          })
-        }
+        {this.state.showDisplayedItems &&
+        <Items>
+          {displayedItems.filter(itemKey => !~selectedItems.indexOf(itemKey)).map(itemKey =>
+          <Item
+            {...items[itemKey]}
+            key={itemKey}
+            handleItemClick={this.addItemToSelected.bind(this, itemKey)}/>)}
+        </Items>}
       </div>
     )
   }

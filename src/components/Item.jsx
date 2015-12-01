@@ -4,7 +4,7 @@ export default class Item extends Component {
   render() {
     const { image, title, subTitle } = this.props;
     return (
-      <div onClick={this.props.onItemClick}>
+      <div onMouseDown={this.props.handleItemClick}>
         <img src={image} />
         <div>{title}</div>
         <div>{subTitle}</div>
@@ -17,5 +17,5 @@ Item.propTypes = {
   image: PropTypes.string,
   title: PropTypes.string,
   subTitle: PropTypes.string,
-  onItemClick: PropTypes.func
+  handleItemClick: PropTypes.func
 };

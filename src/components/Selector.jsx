@@ -10,7 +10,8 @@ export default class Selector extends Component {
         {this.props.children}
         <SearchInput
           searchValue={this.props.searchValue}
-          onSearchInputChange={this.props.handleChangeSearchValue}/>
+          onSearchInputChange={this.props.handleChangeSearchValue}
+          handleSearchInputFocus={this.props.handleSearchInputFocus}/>
       </div>
     )
   }

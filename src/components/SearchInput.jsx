@@ -4,7 +4,11 @@ export default class SearchInput extends Component {
   render() {
     return (
       <div>
-        <input value={this.props.searchValue} onChange={this.props.onSearchInputChange} />
+        <input
+          value={this.props.searchValue}
+          onChange={this.props.onSearchInputChange}
+          onFocus={this.props.handleSearchInputFocus}
+          onBlur={this.props.handleSearchInputFocus}/>
       </div>
     )
   }
@@ -12,5 +16,6 @@ export default class SearchInput extends Component {
 
 SearchInput.propTypes = {
   searchValue: PropTypes.string,
-  onSearchInputChange: PropTypes.func
+  onSearchInputChange: PropTypes.func,
+  handleSearchInputFocus: PropTypes.func
 };
