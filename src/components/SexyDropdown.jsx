@@ -3,6 +3,8 @@ import Item from "./Item.jsx";
 import Selector from "./Selector.jsx";
 import SelectedItem from "./SelectedItem.jsx";
 
+import wordsChecker from "./../words-checker";
+
 export default class SexyDropdown extends Component {
   constructor(props) {
     super(props);
@@ -13,7 +15,8 @@ export default class SexyDropdown extends Component {
     this.state = {
       items,
       displayedItems,
-      selectedItems: []
+      selectedItems: [],
+      searchValue: ''
     };
   }
 
@@ -37,12 +40,48 @@ export default class SexyDropdown extends Component {
     });
   }
 
+  goSearch(e){
+    let displayedItems;
+    if(!e.target.value){
+      displayedItems = Object.keys(this.state.items).slice(0, 10);
+    } else{
+      displayedItems = [];
+      let words = wordsChecker.getConditionalWords(e.target.value);
+
+      for(let itemKey in this.state.items){
+        let item = this.state.items[itemKey];
+
+        loopFields:
+        for(let field in item){
+          if(typeof item[field] == "string"){
+            let value = item[field].toLowerCase();
+
+            for(let i = 0; i < words.length; i++){
+              if(~value.search(words[i])){
+                displayedItems.push(itemKey);
+                break loopFields;
+              }
+            }
+          }
+        }
+      }
+      displayedItems = displayedItems.slice(0, 10);
+    }
+
+    this.setState({
+      searchValue: e.target.value,
+      displayedItems
+    });
+  }
+
   render() {
     const { items, displayedItems, selectedItems } = this.state;
 
     return (
       <div>
-        <Selector>
+        <Selector
+          searchValue={this.state.searchValue}
+          handleChangeSearchValue={this.goSearch.bind(this)}>
           {
             selectedItems.map(itemKey => {
               let item = items[itemKey];
@@ -75,5 +114,5 @@ export default class SexyDropdown extends Component {
 }
 
 SexyDropdown.propTypes = {
-  items: PropTypes.array
+  items: PropTypes.object
 };
