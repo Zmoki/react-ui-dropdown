@@ -10,7 +10,8 @@ let app = {
       <div>
         <SexyDropdown
           items={items}
-          maxDisplayedItems={5}/>
+          maxDisplayedItems={5}
+          showImages={false}/>
         <SexyDropdown
           items={items}
           maxDisplayedItems={2}

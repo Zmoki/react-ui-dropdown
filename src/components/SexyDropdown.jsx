@@ -21,7 +21,8 @@ export default class SexyDropdown extends Component {
       selectedItems: [],
       searchValue: '',
       showDisplayedItems: false,
-      multiple: this.props.multiple !== false
+      multiple: this.props.multiple !== false,
+      showImages: this.props.showImages !== false
     };
   }
 
@@ -122,6 +123,7 @@ export default class SexyDropdown extends Component {
           <Item
             {...items[itemKey]}
             key={itemKey}
+            showImages={this.state.showImages}
             handleItemClick={this.addItemToSelected.bind(this, itemKey)}/>)}
         </Items>}
       </div>
@@ -132,5 +134,6 @@ export default class SexyDropdown extends Component {
 SexyDropdown.propTypes = {
   items: PropTypes.object,
   maxDisplayedItems: PropTypes.number,
-  multiple: PropTypes.boolean
+  multiple: PropTypes.boolean,
+  showImages: PropTypes.boolean
 };
