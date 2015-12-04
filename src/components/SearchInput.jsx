@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 export default class SearchInput extends Component {
   render() {
     return (
-      <div>
+      <div className="sd-search-input">
         <input
           value={this.props.searchValue}
           onChange={this.props.onSearchInputChange}

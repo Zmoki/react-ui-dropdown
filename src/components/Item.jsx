@@ -5,9 +5,9 @@ export default class Item extends Component {
     const { image, title, subTitle } = this.props;
     const showImages = this.props.showImages !== false;
     return (
-      <div onMouseDown={this.props.handleItemClick}>
+      <div className="sd-item" onMouseDown={this.props.handleItemClick}>
         {showImages && image &&
-        <img src={image}/>}
+        <img src={image} alt={title}/>}
         <div>{title}</div>
         <div>{subTitle}</div>
       </div>
@@ -19,6 +19,6 @@ Item.propTypes = {
   image: PropTypes.string,
   title: PropTypes.string,
   subTitle: PropTypes.string,
-  showImages: PropTypes.boolean,
+  showImages: PropTypes.bool,
   handleItemClick: PropTypes.func
 };

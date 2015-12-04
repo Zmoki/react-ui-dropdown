@@ -28,11 +28,11 @@ export default class SexyDropdown extends Component {
 
   addItemToSelected(itemKey) {
     let s;
-    if(this.state.multiple) {
+    if (this.state.multiple) {
       s = this.state.selectedItems;
 
       s.push(itemKey);
-    } else{
+    } else {
       s = [itemKey];
     }
 
@@ -85,7 +85,7 @@ export default class SexyDropdown extends Component {
     });
   }
 
-  toggleItems(){
+  toggleItems() {
     let showDisplayedItems = this.state.showDisplayedItems;
 
     showDisplayedItems = !showDisplayedItems;
@@ -99,22 +99,16 @@ export default class SexyDropdown extends Component {
     const { items, displayedItems, selectedItems } = this.state;
 
     return (
-      <div>
+      <div className="sexy-dropdown">
         <Selector
           searchValue={this.state.searchValue}
           handleChangeSearchValue={this.goSearch.bind(this)}
           handleSearchInputFocus={this.toggleItems.bind(this)}>
-          {
-            selectedItems.map(itemKey => {
-              let item = items[itemKey];
-
-              return (
-              <SelectedItem
-                key={item.id}
-                {...item}
-                onSelectedItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>);
-              })
-            }
+          {selectedItems.map(itemKey =>
+          <SelectedItem
+            {...items[itemKey]}
+            key={itemKey}
+            onSelectedItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
         </Selector>
 
         {this.state.showDisplayedItems &&
@@ -134,6 +128,6 @@ export default class SexyDropdown extends Component {
 SexyDropdown.propTypes = {
   items: PropTypes.object,
   maxDisplayedItems: PropTypes.number,
-  multiple: PropTypes.boolean,
-  showImages: PropTypes.boolean
+  multiple: PropTypes.bool,
+  showImages: PropTypes.bool
 };

@@ -5,7 +5,7 @@ import SearchInput from "./SearchInput.jsx";
 export default class Selector extends Component {
   render() {
     return (
-      <div>
+      <div className="sd-selector">
         {this.props.children}
         <SearchInput
           searchValue={this.props.searchValue}

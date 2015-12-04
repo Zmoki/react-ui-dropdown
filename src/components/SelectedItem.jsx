@@ -5,9 +5,9 @@ export default class SelectedItem extends Component {
     const { title } = this.props;
 
     return (
-      <div>
-        {title}
-        <button onClick={this.props.onSelectedItemClick}>x</button>
+      <div className="sd-selected-item">
+        <span className="sd-title">{title}</span>
+        <button className="close" onClick={this.props.onSelectedItemClick}>×</button>
       </div>
     )
   }
