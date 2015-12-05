@@ -9,13 +9,10 @@ let app = {
     ReactDOM.render(
       <div>
         <SexyDropdown
+          label="Items"
           items={items}
           maxDisplayedItems={5}
           showImages={false}/>
-        <SexyDropdown
-          items={items}
-          maxDisplayedItems={2}
-          multiple={false}/>
       </div>,
       document.getElementById('root')
     );

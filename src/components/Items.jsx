@@ -2,10 +2,18 @@ import React, { Component, PropTypes } from 'react';
 
 export default class Items extends Component {
   render() {
+    const { controlId, hidden } = this.props;
+
     return (
-      <div className="sd-items">{this.props.children}</div>
+      <ul className="sd-items" id={controlId + "_items"} hidden={hidden}
+          role="listbox">
+        {this.props.children}
+      </ul>
     )
   }
 }
 
-Items.propTypes = {};
+Items.propTypes = {
+  controlId: PropTypes.string,
+  hidden: PropTypes.bool
+};

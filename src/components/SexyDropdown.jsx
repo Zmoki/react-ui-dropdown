@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from "react";
 import Items from "./Items.jsx";
 import Item from "./Item.jsx";
-import Selector from "./Selector.jsx";
+import SearchInput from "./SearchInput.jsx";
 import SelectedItem from "./SelectedItem.jsx";
 
 import wordsChecker from "./../words-checker";
+
+import { uniqueId } from "lodash";
 
 export default class SexyDropdown extends Component {
   constructor(props) {
@@ -15,6 +17,8 @@ export default class SexyDropdown extends Component {
     let displayedItems = Object.keys(items).slice(0, maxDisplayedItems);
 
     this.state = {
+      label: this.props.label || "",
+      controlId: uniqueId('sd_'),
       items,
       maxDisplayedItems,
       displayedItems,
@@ -96,30 +100,33 @@ export default class SexyDropdown extends Component {
   }
 
   render() {
-    const { items, displayedItems, selectedItems } = this.state;
+    const { items, displayedItems, selectedItems, label, controlId } = this.state;
 
     return (
       <div className="sexy-dropdown">
-        <Selector
-          searchValue={this.state.searchValue}
-          handleChangeSearchValue={this.goSearch.bind(this)}
-          handleSearchInputFocus={this.toggleItems.bind(this)}>
-          {selectedItems.map(itemKey =>
-          <SelectedItem
-            {...items[itemKey]}
-            key={itemKey}
-            onSelectedItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
-        </Selector>
+        <label className="sd-label" id={controlId + "_label"} htmlFor={controlId + "_search"}>
+          {label}
+        </label>
 
-        {this.state.showDisplayedItems &&
-        <Items>
-          {displayedItems.filter(itemKey => !~selectedItems.indexOf(itemKey)).map(itemKey =>
-          <Item
+        <div className="sd-selector">
+          {selectedItems.map(itemKey =>
+          <SelectedItem key={itemKey}
             {...items[itemKey]}
-            key={itemKey}
+            handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
+
+          <SearchInput controlId={controlId}
+            value={this.props.searchValue}
+            handleInputChange={this.goSearch.bind(this)}
+            handleInputFocus={this.toggleItems.bind(this)}/>
+        </div>
+
+        <Items controlId={controlId} hidden={!this.state.showDisplayedItems}>
+          {displayedItems.filter(itemKey => !~selectedItems.indexOf(itemKey)).map(itemKey =>
+          <Item key={itemKey}
+            {...items[itemKey]}
             showImages={this.state.showImages}
             handleItemClick={this.addItemToSelected.bind(this, itemKey)}/>)}
-        </Items>}
+        </Items>
       </div>
     )
   }
