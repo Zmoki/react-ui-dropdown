@@ -2,21 +2,23 @@ import React, { Component, PropTypes } from 'react';
 
 export default class SearchInput extends Component {
   render() {
-    const { controlId, listId, value, handleInputChange, handleInputFocus  } = this.props;
+    const { dropdownId, value, handleChange, handleFocus, handleKeyDown  } = this.props;
 
     return (
-      <input className="sd-search-input" id={controlId + "_search"} value={value}
-             role="combobox" aria-autocomplete="list" aria-owns={controlId + "_items"}
-             onChange={handleInputChange}
-             onFocus={handleInputFocus}
-             onBlur={handleInputFocus}/>
+      <input className="sd-search-input" id={dropdownId + "-search"} value={value}
+             role="combobox" aria-autocomplete="list" aria-owns={dropdownId + "-items"}
+             onChange={handleChange}
+             onFocus={handleFocus}
+             onBlur={handleFocus}
+             onKeyDown={handleKeyDown}/>
     )
   }
 }
 
 SearchInput.propTypes = {
-  controlId: PropTypes.string,
-  value: PropTypes.string,
-  handleInputChange: PropTypes.func,
-  handleInputFocus: PropTypes.func
+  dropdownId: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleFocus: PropTypes.func.isRequired,
+  handleKeyDown: PropTypes.func.isRequired
 };

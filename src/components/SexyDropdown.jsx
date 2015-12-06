@@ -6,7 +6,13 @@ import SelectedItem from "./SelectedItem.jsx";
 
 import wordsChecker from "./../words-checker";
 
-import { uniqueId } from "lodash";
+let idCounter = 0;
+
+function uniqueId(prefix) {
+  let id = ++idCounter;
+
+  return prefix + id;
+}
 
 export default class SexyDropdown extends Component {
   constructor(props) {
@@ -18,15 +24,15 @@ export default class SexyDropdown extends Component {
 
     this.state = {
       label: this.props.label || "",
-      controlId: uniqueId('sd_'),
+      dropdownId: uniqueId('sd-'),
       items,
       maxDisplayedItems,
       displayedItems,
       selectedItems: [],
       searchValue: '',
-      showDisplayedItems: false,
       multiple: this.props.multiple !== false,
-      showImages: this.props.showImages !== false
+      showImages: this.props.showImages !== false,
+      focusedItem: displayedItems[0]
     };
   }
 
@@ -51,7 +57,8 @@ export default class SexyDropdown extends Component {
     s.splice(s.indexOf(itemKey), 1);
 
     this.setState({
-      selectedItems: s
+      selectedItems: s,
+      focusedItem: this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0]
     });
   }
 
@@ -87,45 +94,90 @@ export default class SexyDropdown extends Component {
       searchValue: e.target.value,
       displayedItems
     });
+
+    this.setFocusedItem(displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0]);
   }
 
   toggleItems() {
-    let showDisplayedItems = this.state.showDisplayedItems;
+    this.refs.items.toggleHidden(()=> {
+      let item = this.refs["item-" + this.state.focusedItem];
+      if (item) item.setFocused(true);
+    }, ()=> {
+      let focusedItem = this.state.focusedItem;
+      let item = this.refs["item-" + focusedItem];
+      if (item) item.setFocused(false);
 
-    showDisplayedItems = !showDisplayedItems;
-
-    this.setState({
-      showDisplayedItems
+      focusedItem = this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0];
+      this.setState({
+        focusedItem
+      });
     });
   }
 
+  setFocusedItem(itemKey) {
+    let focusedItem = this.state.focusedItem;
+    let item = this.refs["item-" + focusedItem];
+    if (item) item.setFocused(false);
+
+    focusedItem = itemKey;
+    item = this.refs["item-" + focusedItem];
+    if (item) item.setFocused(true);
+
+    this.setState({
+      focusedItem
+    });
+  }
+
+  handleSearchInputKeyStroke(e) {
+    let focusedItem = this.state.focusedItem;
+    let displayedItems = this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey));
+    let focusedItemIndex = displayedItems.indexOf(focusedItem);
+
+    switch (e.key) {
+      case "ArrowDown":
+        focusedItemIndex = focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : 0;
+        this.setFocusedItem(displayedItems[focusedItemIndex]);
+        break;
+      case "ArrowUp":
+        focusedItemIndex = (focusedItemIndex == 0) ? (displayedItems.length - 1) : (focusedItemIndex - 1);
+        this.setFocusedItem(displayedItems[focusedItemIndex]);
+        break;
+      case "Enter":
+        this.addItemToSelected(focusedItem);
+
+        focusedItemIndex = focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : (focusedItemIndex - 1);
+        this.setFocusedItem(displayedItems[focusedItemIndex]);
+        break;
+    }
+  }
+
   render() {
-    const { items, displayedItems, selectedItems, label, controlId } = this.state;
+    const { dropdownId, items, displayedItems, selectedItems, label, searchValue, focusedItem, showImages } = this.state;
 
     return (
       <div className="sexy-dropdown">
-        <label className="sd-label" id={controlId + "_label"} htmlFor={controlId + "_search"}>
+        <label className="sd-label" id={dropdownId + "-label"} htmlFor={dropdownId + "-search"}>
           {label}
         </label>
 
         <div className="sd-selector">
           {selectedItems.map(itemKey =>
-          <SelectedItem key={itemKey}
-            {...items[itemKey]}
-            handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
+          <SelectedItem key={itemKey} {...items[itemKey]}
+                        handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
 
-          <SearchInput controlId={controlId}
-            value={this.props.searchValue}
-            handleInputChange={this.goSearch.bind(this)}
-            handleInputFocus={this.toggleItems.bind(this)}/>
+          <SearchInput dropdownId={dropdownId} value={searchValue}
+                       handleChange={this.goSearch.bind(this)}
+                       handleFocus={this.toggleItems.bind(this)}
+                       handleKeyDown={this.handleSearchInputKeyStroke.bind(this)}/>
         </div>
 
-        <Items controlId={controlId} hidden={!this.state.showDisplayedItems}>
-          {displayedItems.filter(itemKey => !~selectedItems.indexOf(itemKey)).map(itemKey =>
-          <Item key={itemKey}
-            {...items[itemKey]}
-            showImages={this.state.showImages}
-            handleItemClick={this.addItemToSelected.bind(this, itemKey)}/>)}
+        <Items ref="items" dropdownId={dropdownId} focusedItem={focusedItem}>
+          {displayedItems.map(itemKey =>
+          <Item ref={"item-" + itemKey} key={itemKey} dropdownId={dropdownId} {...items[itemKey]}
+                selected={~selectedItems.indexOf(itemKey)}
+                showImages={showImages}
+                handleItemClick={this.addItemToSelected.bind(this, itemKey)}
+                handleItemHover={this.setFocusedItem.bind(this, itemKey)}/>)}
         </Items>
       </div>
     )
@@ -133,8 +185,9 @@ export default class SexyDropdown extends Component {
 }
 
 SexyDropdown.propTypes = {
-  items: PropTypes.object,
+  items: PropTypes.object.isRequired,
   maxDisplayedItems: PropTypes.number,
-  multiple: PropTypes.bool,
-  showImages: PropTypes.bool
+  label: PropTypes.string,
+  showImages: PropTypes.bool,
+  multiple: PropTypes.bool
 };

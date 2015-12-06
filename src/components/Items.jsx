@@ -1,19 +1,44 @@
 import React, { Component, PropTypes } from 'react';
 
 export default class Items extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      hidden: true
+    }
+  }
+
+  toggleHidden(handleShow, handleHidden) {
+    let hidden = !this.state.hidden;
+
+    if (!hidden) {
+      handleShow();
+    } else {
+      handleHidden();
+    }
+
+    this.setState({
+      hidden: hidden
+    });
+  }
+
   render() {
-    const { controlId, hidden } = this.props;
+    const { dropdownId, focusedItem } = this.props;
 
     return (
-      <ul className="sd-items" id={controlId + "_items"} hidden={hidden}
-          role="listbox">
+      <div className="sd-items" id={dropdownId + "-items"} hidden={this.state.hidden}
+           role="listbox" tabIndex="-1" aria-activedescendant={focusedItem && dropdownId + "-item-" + focusedItem}>
         {this.props.children}
-      </ul>
+      </div>
     )
   }
 }
 
 Items.propTypes = {
-  controlId: PropTypes.string,
-  hidden: PropTypes.bool
+  dropdownId: PropTypes.string.isRequired,
+  focusedItem: PropTypes.oneOfType([
+    React.PropTypes.number,
+    React.PropTypes.string
+  ])
 };

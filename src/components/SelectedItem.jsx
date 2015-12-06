@@ -14,6 +14,6 @@ export default class SelectedItem extends Component {
 }
 
 SelectedItem.propTypes = {
-  title: PropTypes.string,
-  handleItemClick: PropTypes.func
+  title: PropTypes.string.isRequired,
+  handleItemClick: PropTypes.func.isRequired
 };

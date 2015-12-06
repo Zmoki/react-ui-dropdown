@@ -1,26 +1,55 @@
 import React, { Component, PropTypes } from 'react';
 
 export default class Item extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selected: this.props.selected,
+      focused: false
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selected != this.state.selected) {
+      this.setState({
+        selected: nextProps.selected
+      });
+    }
+  }
+
+  setFocused(focused) {
+    this.setState({
+      focused
+    });
+  }
+
   render() {
-    const { image, title, subTitle, handleItemClick } = this.props;
+    const { dropdownId, id, image, title, subTitle, handleItemClick, handleItemHover } = this.props;
     const showImages = this.props.showImages !== false;
 
+    const { selected, focused } = this.state;
+
     return (
-      <li className="sd-item" role="option"
-          onMouseDown={handleItemClick}>
-        {showImages && image &&
-        <img src={image} alt={title}/>}
-        <span>{title}</span>
-        <span>{subTitle}</span>
-      </li>
+      <div className={`sd-item${focused ? " selected": ""}`} id={dropdownId + "-item-" + id} hidden={selected}
+           role="option" tabIndex="-1"
+           onMouseDown={handleItemClick}
+           onMouseMove={handleItemHover}>
+        {showImages && image && <img src={image} alt={title}/>}
+        <div>{title}</div>
+        {subTitle && <div>{subTitle}</div>}
+      </div>
     )
   }
 }
 
 Item.propTypes = {
+  dropdownId: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
   image: PropTypes.string,
-  title: PropTypes.string,
+  title: PropTypes.string.isRequired,
   subTitle: PropTypes.string,
   showImages: PropTypes.bool,
-  handleItemClick: PropTypes.func
+  handleItemClick: PropTypes.func.isRequired,
+  handleItemHover: PropTypes.func.isRequired
 };
