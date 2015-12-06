@@ -37,17 +37,8 @@ export default class SexyDropdown extends Component {
   }
 
   addItemToSelected(itemKey) {
-    let s;
-    if (this.state.multiple) {
-      s = this.state.selectedItems;
-
-      s.push(itemKey);
-    } else {
-      s = [itemKey];
-    }
-
     this.setState({
-      selectedItems: s
+      selectedItems: this.state.multiple ? this.state.selectedItems.concat(itemKey) : [itemKey]
     });
   }
 
@@ -58,7 +49,7 @@ export default class SexyDropdown extends Component {
 
     this.setState({
       selectedItems: s,
-      focusedItem: this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0]
+      focusedItem: this.state.displayedItems.filter(itemKey => !~s.indexOf(itemKey))[0]
     });
   }
 
@@ -103,25 +94,24 @@ export default class SexyDropdown extends Component {
       let item = this.refs["item-" + this.state.focusedItem];
       if (item) item.setFocused(true);
     }, ()=> {
-      let focusedItem = this.state.focusedItem;
-      let item = this.refs["item-" + focusedItem];
-      if (item) item.setFocused(false);
-
-      focusedItem = this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0];
-      this.setState({
-        focusedItem
-      });
+      this.setFocusedItem(this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0], false);
     });
   }
 
-  setFocusedItem(itemKey) {
-    let focusedItem = this.state.focusedItem;
-    let item = this.refs["item-" + focusedItem];
+  setFocusedItem(itemKey, updateItem = true) {
+    let focusedItem, item;
+
+    focusedItem = this.state.focusedItem;
+
+    item = this.refs["item-" + focusedItem];
     if (item) item.setFocused(false);
 
     focusedItem = itemKey;
-    item = this.refs["item-" + focusedItem];
-    if (item) item.setFocused(true);
+
+    if(updateItem) {
+      item = this.refs["item-" + focusedItem];
+      if (item) item.setFocused(true);
+    }
 
     this.setState({
       focusedItem
