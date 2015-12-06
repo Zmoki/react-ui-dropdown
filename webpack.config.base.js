@@ -28,5 +28,8 @@ module.exports = {
   },
   resolve: {
     extensions: ["", ".js"]
+  },
+  externals: {
+    react: "commonjs react"
   }
 };

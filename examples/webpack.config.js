@@ -34,11 +34,15 @@ module.exports = {
 // When inside sexy-dropdown repo, prefer src to compiled version.
 // You can safely delete these lines in your project.
 var sexyDropdownSrc = path.join(__dirname, "..", "src");
-var sexyDropdownNodeModules = path.join(__dirname, "..", "node_modules");
 var fs = require("fs");
-if (fs.existsSync(sexyDropdownSrc) && fs.existsSync(sexyDropdownNodeModules)) {
+if (fs.existsSync(sexyDropdownSrc)) {
   // Resolve sexy-dropdown to source
-  module.exports.resolve = { alias: { "sexy-dropdown": sexyDropdownSrc } };
+  module.exports.resolve = {
+    alias: {
+      "sexy-dropdown": sexyDropdownSrc,
+      "react": path.join(__dirname, "node_modules", "react")
+    }
+  };
   // Compile sexy-dropdown from source
   module.exports.module.loaders.push({
     test: /\.jsx$/,
