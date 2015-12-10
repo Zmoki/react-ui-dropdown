@@ -5,7 +5,7 @@ export default class Item extends Component {
     super(props);
 
     this.state = {
-      selected: this.props.selected,
+      selected: props.selected,
       focused: false
     }
   }

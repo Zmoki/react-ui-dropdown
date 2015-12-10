@@ -1,16 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { APISearchItems, SexyDropdown } from "sexy-dropdown";
+import { SexyDropdown } from "sexy-dropdown";
 
 let app = {
   run() {
-    const items = APISearchItems.getItems();
-
     ReactDOM.render(
       <div>
         <SexyDropdown
           label="Items"
-          items={items}
+          source="/items-search"
           maxDisplayedItems={5}
           showImages={false}/>
       </div>,

@@ -18,131 +18,226 @@ export default class SexyDropdown extends Component {
   constructor(props) {
     super(props);
 
-    let maxDisplayedItems = this.props.maxDisplayedItems || 10;
-    let items = this.props.items;
-    let displayedItems = Object.keys(items).slice(0, maxDisplayedItems);
+    const maxDisplayedItems = props.maxDisplayedItems || 10;
+    const items = this.getItemsFromData(props.items, maxDisplayedItems);
 
     this.state = {
-      label: this.props.label || "",
       dropdownId: uniqueId('sd-'),
-      items,
       maxDisplayedItems,
-      displayedItems,
-      selectedItems: [],
+      items,
+      focusedItem: items.keys.displayed[0] || null,
+      label: props.label || "",
       searchValue: '',
-      multiple: this.props.multiple !== false,
-      showImages: this.props.showImages !== false,
-      focusedItem: displayedItems[0]
+      multiple: props.multiple !== false,
+      showImages: props.showImages !== false
     };
   }
 
+  componentDidMount() {
+    if (this.props.source) {
+      this.sendRequest(this.props.source, (e) => {
+        const xhr = e.target;
+        const response = (typeof xhr.response) == "string" ? JSON.parse(xhr.response) : xhr.response;
+
+        if (!response.items || !response.items.length) {
+          return;
+        }
+
+        const items = this.getItemsFromData(response.items);
+
+        this.setState({
+          items,
+          focusedItem: items.keys.displayed[0] || null
+        });
+      });
+    }
+  }
+
+  componentWillUpdate(nextProps, nextState){
+    if(this.state.focusedItem != nextState.focusedItem) {
+      let item = this.refs["item-" + this.state.focusedItem];
+      if (item) item.setFocused(false);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if(prevState.focusedItem != this.state.focusedItem) {
+      let item = this.refs["item-" + this.state.focusedItem];
+      if (item) item.setFocused(true);
+    }
+  }
+
+  getItemsFromData(data, maxDisplayedItems) {
+    maxDisplayedItems = maxDisplayedItems || this.state.maxDisplayedItems;
+
+    let items = {
+      collection: {},
+      keys: {
+        all: [],
+        started: [],
+        displayed: [],
+        selected: []
+      }
+    };
+
+    if (data && data.length) {
+      items.keys.all = data.map(item => item.id);
+      items.keys.started = items.keys.displayed = items.keys.all.slice(0, maxDisplayedItems);
+      items.collection = data.reduce((obj, item) => {
+        obj[item.id] = item;
+        return obj;
+      }, {});
+    }
+
+    return items;
+  }
+
+  getNotSelectedItems() {
+    return this.state.items.keys.displayed.filter(itemKey => !~this.state.items.keys.selected.indexOf(itemKey));
+  }
+
+  sendRequest(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "json";
+
+    xhr.onload = callback;
+
+    xhr.onerror = () => {
+    };
+
+    xhr.send();
+  }
+
   addItemToSelected(itemKey) {
+    let items = this.state.items;
+    items.keys.selected = this.state.multiple ? this.state.items.keys.selected.concat(itemKey) : [itemKey];
+
     this.setState({
-      selectedItems: this.state.multiple ? this.state.selectedItems.concat(itemKey) : [itemKey]
+      items
     });
   }
 
   removeItemFromSelected(itemKey) {
-    let s = this.state.selectedItems;
+    let s = this.state.items.keys.selected;
 
     s.splice(s.indexOf(itemKey), 1);
 
+    let items = this.state.items;
+    items.keys.selected = s;
+
     this.setState({
-      selectedItems: s,
-      focusedItem: this.state.displayedItems.filter(itemKey => !~s.indexOf(itemKey))[0]
+      items,
+      focusedItem: this.state.items.keys.displayed.filter(itemKey => !~s.indexOf(itemKey))[0]
     });
   }
 
-  goSearch(e) {
-    let displayedItems;
-    if (!e.target.value) {
-      displayedItems = Object.keys(this.state.items).slice(0, this.state.maxDisplayedItems);
-    } else {
-      displayedItems = [];
-      let words = wordsChecker.getConditionalWords(e.target.value);
+  setFocusedItem(itemKey) {
+    this.setState({
+      focusedItem: itemKey
+    });
+  }
 
-      for (let itemKey in this.state.items) {
-        let item = this.state.items[itemKey];
-
-        loopFields:
-          for (let field in item) {
-            if (typeof item[field] == "string") {
-              let value = item[field].toLowerCase();
-
-              for (let i = 0; i < words.length; i++) {
-                if (~value.search(words[i])) {
-                  displayedItems.push(itemKey);
-                  break loopFields;
-                }
-              }
-            }
-          }
-      }
-      displayedItems = displayedItems.slice(0, this.state.maxDisplayedItems);
+  goSearch(q, callback) {
+    if (!q.length) {
+      return;
     }
 
-    this.setState({
-      searchValue: e.target.value,
-      displayedItems
+    let foundItemsKeys = [];
+
+    const words = wordsChecker.getConditionalWords(q);
+    const fields = ["title"];
+
+    this.state.items.keys.all.forEach(itemKey => {
+      const item = this.state.items.collection[itemKey];
+
+      for (let f = 0; f < fields.length; f++) {
+        const value = item[fields[f]].toLowerCase();
+        for (let w = 0; w < words.length; w++) {
+          if (~value.search(words[w])) {
+            foundItemsKeys.push(itemKey);
+            return;
+          }
+        }
+      }
     });
 
-    this.setFocusedItem(displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0]);
+    if (!this.props.source) {
+      callback(foundItemsKeys);
+      return;
+    }
+
+    this.sendRequest(`${this.props.source}?q=${q}&search_in=domain`, (e) => {
+      const xhr = e.target;
+      const response = (typeof xhr.response) == "string" ? JSON.parse(xhr.response) : xhr.response;
+      const serverFoundItemsKeys = response.items.map(item => item.id);
+
+      if (serverFoundItemsKeys.length) {
+        foundItemsKeys = foundItemsKeys.concat(serverFoundItemsKeys.filter(itemKey => !~foundItemsKeys.indexOf(itemKey)));
+      }
+
+      callback(foundItemsKeys);
+    });
   }
 
   toggleItems() {
-    this.refs.items.toggleHidden(()=> {
-      let item = this.refs["item-" + this.state.focusedItem];
-      if (item) item.setFocused(true);
-    }, ()=> {
-      this.setFocusedItem(this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey))[0], false);
+    this.refs.items.toggleHidden(()=> {}, ()=> {
+      this.setState({
+        focusedItem: this.getNotSelectedItems()[0] || null
+      });
     });
   }
 
-  setFocusedItem(itemKey, updateItem = true) {
-    let focusedItem, item;
+  handleSearchInputChange(e) {
+    const searchValue = e.target.value;
+    const updateState = (displayedItemsKeys) => {
+      let items = this.state.items;
+      items.keys.displayed = displayedItemsKeys;
 
-    focusedItem = this.state.focusedItem;
+      this.setState({
+        items,
+        searchValue,
+        focusedItem: items.keys.displayed.filter(itemKey => !~items.keys.selected.indexOf(itemKey))[0] || null
+      });
+    };
 
-    item = this.refs["item-" + focusedItem];
-    if (item) item.setFocused(false);
-
-    focusedItem = itemKey;
-
-    if(updateItem) {
-      item = this.refs["item-" + focusedItem];
-      if (item) item.setFocused(true);
+    if (!searchValue.length) {
+      updateState(this.state.items.keys.started);
+      return;
     }
 
-    this.setState({
-      focusedItem
+    this.goSearch(searchValue, foundItemsKeys => {
+      updateState(foundItemsKeys.slice(0, this.state.maxDisplayedItems));
     });
   }
 
   handleSearchInputKeyStroke(e) {
-    let focusedItem = this.state.focusedItem;
-    let displayedItems = this.state.displayedItems.filter(itemKey => !~this.state.selectedItems.indexOf(itemKey));
-    let focusedItemIndex = displayedItems.indexOf(focusedItem);
+    const focusedItem = this.state.focusedItem;
+    const displayedItems = this.getNotSelectedItems();
+    const focusedItemIndex = displayedItems.indexOf(focusedItem);
+    const updateState = (focusedItemIndex) => {
+      this.setState({
+        focusedItem: displayedItems[focusedItemIndex] || null
+      });
+    };
 
     switch (e.key) {
       case "ArrowDown":
-        focusedItemIndex = focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : 0;
-        this.setFocusedItem(displayedItems[focusedItemIndex]);
+        updateState(focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : 0);
         break;
       case "ArrowUp":
-        focusedItemIndex = (focusedItemIndex == 0) ? (displayedItems.length - 1) : (focusedItemIndex - 1);
-        this.setFocusedItem(displayedItems[focusedItemIndex]);
+        updateState((focusedItemIndex == 0) ? (displayedItems.length - 1) : (focusedItemIndex - 1));
         break;
       case "Enter":
         this.addItemToSelected(focusedItem);
 
-        focusedItemIndex = focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : (focusedItemIndex - 1);
-        this.setFocusedItem(displayedItems[focusedItemIndex]);
+        updateState(focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : (focusedItemIndex - 1));
         break;
     }
   }
 
   render() {
-    const { dropdownId, items, displayedItems, selectedItems, label, searchValue, focusedItem, showImages } = this.state;
+    const { dropdownId, items, focusedItem, label, searchValue, showImages } = this.state;
 
     return (
       <div className="sexy-dropdown">
@@ -151,20 +246,20 @@ export default class SexyDropdown extends Component {
         </label>
 
         <div className="sd-selector">
-          {selectedItems.map(itemKey =>
-          <SelectedItem key={itemKey} {...items[itemKey]}
+          {items.keys.selected.map(itemKey =>
+          <SelectedItem key={itemKey} {...items.collection[itemKey]}
                         handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
 
           <SearchInput dropdownId={dropdownId} value={searchValue}
-                       handleChange={this.goSearch.bind(this)}
+                       handleChange={this.handleSearchInputChange.bind(this)}
                        handleFocus={this.toggleItems.bind(this)}
                        handleKeyDown={this.handleSearchInputKeyStroke.bind(this)}/>
         </div>
 
         <Items ref="items" dropdownId={dropdownId} focusedItem={focusedItem}>
-          {displayedItems.map(itemKey =>
-          <Item ref={"item-" + itemKey} key={itemKey} dropdownId={dropdownId} {...items[itemKey]}
-                selected={~selectedItems.indexOf(itemKey)}
+          {items.keys.displayed.map(itemKey =>
+          <Item ref={"item-" + itemKey} key={itemKey} dropdownId={dropdownId} {...items.collection[itemKey]}
+                selected={~items.keys.selected.indexOf(itemKey)}
                 showImages={showImages}
                 handleItemClick={this.addItemToSelected.bind(this, itemKey)}
                 handleItemHover={this.setFocusedItem.bind(this, itemKey)}/>)}
@@ -175,7 +270,8 @@ export default class SexyDropdown extends Component {
 }
 
 SexyDropdown.propTypes = {
-  items: PropTypes.object.isRequired,
+  items: PropTypes.array,
+  source: PropTypes.string,
   maxDisplayedItems: PropTypes.number,
   label: PropTypes.string,
   showImages: PropTypes.bool,
