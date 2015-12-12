@@ -35,9 +35,8 @@ export default class SexyDropdown extends Component {
 
   componentDidMount() {
     if (this.props.source) {
-      this.sendRequest(this.props.source, (e) => {
-        const xhr = e.target;
-        const response = (typeof xhr.response) == "string" ? JSON.parse(xhr.response) : xhr.response;
+      this.sendRequest(this.props.source, (xhr) => {
+        const response = JSON.parse(xhr.responseText);
 
         if (!response.items || !response.items.length) {
           return;
@@ -97,13 +96,28 @@ export default class SexyDropdown extends Component {
   }
 
   sendRequest(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-    xhr.responseType = "json";
+    let xhr;
+    try {
+      xhr = new ActiveXObject("Msxml2.XMLHTTP");
+    } catch (e) {
+      try {
+        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+      } catch (E) {
+        xhr = false;
+      }
+    }
+    if (!xhr && typeof XMLHttpRequest!='undefined') {
+      xhr = new XMLHttpRequest();
+    }
 
-    xhr.onload = callback;
+    xhr.open("GET", url, true);
 
-    xhr.onerror = () => {
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          callback(xhr);
+        }
+      }
     };
 
     xhr.send();
@@ -167,9 +181,8 @@ export default class SexyDropdown extends Component {
       return;
     }
 
-    this.sendRequest(`${this.props.source}?q=${q}&search_in=domain`, (e) => {
-      const xhr = e.target;
-      const response = (typeof xhr.response) == "string" ? JSON.parse(xhr.response) : xhr.response;
+    this.sendRequest(`${this.props.source}?q=${q}&search_in=domain`, (xhr) => {
+      const response = JSON.parse(xhr.responseText);
       const serverFoundItemsKeys = response.items.map(item => item.id);
 
       if (serverFoundItemsKeys.length) {
