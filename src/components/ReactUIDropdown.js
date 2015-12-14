@@ -47,7 +47,7 @@ export default class ReactUIDropdown extends Component {
     const items = this.getItemsFromData(props.items, maxDisplayedItems);
 
     this.state = {
-      dropdownId: uniqueId("sd-"),
+      dropdownId: uniqueId("dropdown-"),
       maxDisplayedItems,
       items,
       focusedItem: items.keys.displayed[0] || null,
@@ -272,12 +272,12 @@ export default class ReactUIDropdown extends Component {
     const { dropdownId, items, focusedItem, label, searchValue, showImages } = this.state;
 
     return (
-      <div className="react-ui-dropdown">
-        <label className="sd-label" id={dropdownId + "-label"} htmlFor={dropdownId + "-search"}>
+      <div className="dropdown">
+        <label className="dropdown-label" id={dropdownId + "-label"} htmlFor={dropdownId + "-search"}>
           {label}
         </label>
 
-        <div className="sd-selector">
+        <div className="dropdown-selector">
           {items.keys.selected.map(itemKey =>
           <SelectedItem key={itemKey} {...items.collection[itemKey]}
                         handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}

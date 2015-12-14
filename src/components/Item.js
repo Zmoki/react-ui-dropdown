@@ -31,13 +31,13 @@ export default class Item extends Component {
     const { selected, focused } = this.state;
 
     return (
-      <div className={`sd-item${focused ? " selected": ""}`} id={dropdownId + "-item-" + id} hidden={selected}
+      <div className={`dropdown-item${focused ? " selected": ""}`} id={dropdownId + "-item-" + id} hidden={selected}
            role="option" tabIndex="-1"
            onMouseDown={handleItemClick}
            onMouseMove={handleItemHover}>
-        {showImages && image && <img src={image} alt={title}/>}
-        <div>{title}</div>
-        {subTitle && <div>{subTitle}</div>}
+        {showImages && image && <img className="dropdown-item-image" src={image} alt={title}/>}
+        <div className="dropdown-item-title">{title}</div>
+        {subTitle && <div className="dropdown-item-subtitle">{subTitle}</div>}
       </div>
     )
   }

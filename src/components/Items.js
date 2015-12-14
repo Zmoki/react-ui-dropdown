@@ -27,7 +27,7 @@ export default class Items extends Component {
     const { dropdownId, focusedItem } = this.props;
 
     return (
-      <div className="sd-items" id={dropdownId + "-items"} hidden={this.state.hidden}
+      <div className="dropdown-items" id={dropdownId + "-items"} hidden={this.state.hidden}
            role="listbox" tabIndex="-1" aria-activedescendant={focusedItem && dropdownId + "-item-" + focusedItem}>
         {this.props.children}
       </div>

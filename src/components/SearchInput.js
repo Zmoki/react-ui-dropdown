@@ -5,7 +5,7 @@ export default class SearchInput extends Component {
     const { dropdownId, value, handleChange, handleFocus, handleKeyDown  } = this.props;
 
     return (
-      <input className="sd-search-input" id={dropdownId + "-search"} value={value}
+      <input className="dropdown-search-input" id={dropdownId + "-search"} value={value}
              role="combobox" aria-autocomplete="list" aria-owns={dropdownId + "-items"}
              onChange={handleChange}
              onFocus={handleFocus}
