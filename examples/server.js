@@ -6,7 +6,7 @@ if (!process.env.EXAMPLE_NAME) {
 
 const express = require("express");
 const path = require("path");
-const itemChecker = require("./../lib/item-checker").default;
+const itemChecker = require((process.env.USE_SOURCE ? "./.." : "react-ui-dropdown") + "/lib/item-checker").default;
 
 const example = process.env.EXAMPLE_NAME;
 const mode = process.env.NODE_ENV || "development";

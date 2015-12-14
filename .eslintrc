@@ -4,10 +4,12 @@
     "blockBindings": true,
     "classes": true,
     "defaultParams": true,
+    "destructuring": true,
     "forOf": true,
     "modules": true,
     "objectLiteralShorthandMethods": true,
     "objectLiteralShorthandProperties": true,
+    "templateStrings": true,
     "jsx": true
   },
   "rules": {

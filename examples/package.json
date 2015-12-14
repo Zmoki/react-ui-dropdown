@@ -27,6 +27,7 @@
     "html5shiv": "^3.7.3",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
+    "react-ui-dropdown": "^0.1.1",
     "string-replace-webpack-plugin": "0.0.2",
     "webpack": "^1.12.9"
   },

@@ -27,7 +27,7 @@ let config = {
   module: {
     loaders: [
       {
-        test: [/\.jsx$/, /\.js$/],
+        test: /\.js$/,
         loader: "babel",
         query: {
           presets: ["react", "es2015"]
@@ -38,12 +38,14 @@ let config = {
 };
 
 // Resolve react-ui-dropdown to source
-config.resolve = {
-  alias: {
-    "react-ui-dropdown": path.join(__dirname, "..", "src"),
-    "react": path.join(__dirname, "node_modules", "react")
-  }
-};
+if(process.env.USE_SOURCE) {
+  config.resolve = {
+    alias: {
+      "react-ui-dropdown": path.join(__dirname, "..", "src"),
+      "react": path.join(__dirname, "node_modules", "react")
+    }
+  };
+}
 
 if (mode == "development") {
   config.devtool = "cheap-module-eval-source-map";
@@ -86,7 +88,7 @@ if (mode == "production") {
 
   config.plugins = config.plugins.concat([new StringReplacePlugin()]);
   config.module.postLoaders = (config.module.postLoaders || []).concat([{
-    test: [/\.jsx$/, /\.js$/],
+    test: /\.js$/,
     loader: StringReplacePlugin.replace({
       replacements: [
         {

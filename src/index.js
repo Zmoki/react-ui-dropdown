@@ -1,3 +1,3 @@
-import ReactUIDropdown from "./components/ReactUIDropdown.jsx";
+import ReactUIDropdown from "./components/ReactUIDropdown";
 
 export default ReactUIDropdown;

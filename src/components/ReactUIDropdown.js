@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from "react";
-import Items from "./Items.jsx";
-import Item from "./Item.jsx";
-import SearchInput from "./SearchInput.jsx";
-import SelectedItem from "./SelectedItem.jsx";
+import Items from "./Items";
+import Item from "./Item";
+import SearchInput from "./SearchInput";
+import SelectedItem from "./SelectedItem";
 
 import itemChecker from "./../item-checker";
 
@@ -22,12 +22,12 @@ export default class ReactUIDropdown extends Component {
     const items = this.getItemsFromData(props.items, maxDisplayedItems);
 
     this.state = {
-      dropdownId: uniqueId('sd-'),
+      dropdownId: uniqueId("sd-"),
       maxDisplayedItems,
       items,
       focusedItem: items.keys.displayed[0] || null,
       label: props.label || "",
-      searchValue: '',
+      searchValue: "",
       multiple: props.multiple !== false,
       showImages: props.showImages !== false
     };
@@ -106,7 +106,7 @@ export default class ReactUIDropdown extends Component {
         xhr = false;
       }
     }
-    if (!xhr && typeof XMLHttpRequest!='undefined') {
+    if (!xhr && typeof XMLHttpRequest!="undefined") {
       xhr = new XMLHttpRequest();
     }
 
