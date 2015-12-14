@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { SexyDropdown } from "sexy-dropdown";
+import React from "react";
+import ReactDOM from "react-dom";
+import SexyDropdown from "sexy-dropdown";
 
 let app = {
   run() {
@@ -12,7 +12,7 @@ let app = {
           maxDisplayedItems={5}
           showImages={false}/>
       </div>,
-      document.getElementById('root')
+      document.getElementById("root")
     );
   }
 };
