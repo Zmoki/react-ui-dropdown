@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import SexyDropdown from "sexy-dropdown";
+import ReactUIDropdown from "react-ui-dropdown";
 
 let app = {
   run() {
     ReactDOM.render(
       <div>
-        <SexyDropdown
+        <ReactUIDropdown
           label="Items"
           source="/items-search"
           maxDisplayedItems={5}

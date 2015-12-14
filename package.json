@@ -1,8 +1,8 @@
 {
-  "name": "sexy-dropdown",
+  "name": "react-ui-dropdown",
   "config": {
-    "name": "sexy-dropdown",
-    "library": "SexyDropdown"
+    "name": "react-ui-dropdown",
+    "library": "ReactUIDropdown"
   },
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -12,7 +12,7 @@
     "src"
   ],
   "version": "0.1.0",
-  "description": "Sexy Dropdown — dropdown like in vk.com.",
+  "description": "React UI Dropdown — dropdown like in vk.com.",
   "scripts": {
     "clean": "rimraf lib dist",
     "lint": "eslint src test",
@@ -29,11 +29,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Zmoki/sexy-dropdown.git"
+    "url": "https://github.com/Zmoki/react-ui-dropdown.git"
   },
   "author": "Zarema Khalilova",
   "license": "MIT",
-  "homepage": "https://github.com/Zmoki/sexy-dropdown",
+  "homepage": "https://github.com/Zmoki/react-ui-dropdown",
   "devDependencies": {
     "babel-cli": "^6.3.17",
     "babel-core": "^6.3.17",
@@ -49,7 +49,7 @@
     "rimraf": "^2.4.4",
     "webpack": "^1.12.9"
   },
-  "npmName": "sexy-dropdown",
+  "npmName": "react-ui-dropdown",
   "npmFileMap": [
     {
       "basePath": "/dist/",

@@ -1,3 +1,3 @@
-import SexyDropdown from "./components/SexyDropdown.jsx";
+import ReactUIDropdown from "./components/ReactUIDropdown.jsx";
 
-export default SexyDropdown;
+export default ReactUIDropdown;

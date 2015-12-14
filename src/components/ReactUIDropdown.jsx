@@ -14,7 +14,7 @@ function uniqueId(prefix) {
   return prefix + id;
 }
 
-export default class SexyDropdown extends Component {
+export default class ReactUIDropdown extends Component {
   constructor(props) {
     super(props);
 
@@ -241,7 +241,7 @@ export default class SexyDropdown extends Component {
     const { dropdownId, items, focusedItem, label, searchValue, showImages } = this.state;
 
     return (
-      <div className="sexy-dropdown">
+      <div className="react-ui-dropdown">
         <label className="sd-label" id={dropdownId + "-label"} htmlFor={dropdownId + "-search"}>
           {label}
         </label>
@@ -270,7 +270,7 @@ export default class SexyDropdown extends Component {
   }
 }
 
-SexyDropdown.propTypes = {
+ReactUIDropdown.propTypes = {
   items: PropTypes.array,
   source: PropTypes.string,
   maxDisplayedItems: PropTypes.number,

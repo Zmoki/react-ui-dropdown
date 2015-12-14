@@ -1,7 +1,7 @@
 {
-  "name": "sexy-dropdown-example",
+  "name": "react-ui-dropdown-example",
   "version": "0.0.0",
-  "description": "Example for Sexy Dropdown.",
+  "description": "Example for React UI Dropdown.",
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
@@ -9,11 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Zmoki/sexy-dropdown.git"
+    "url": "https://github.com/Zmoki/react-ui-dropdown.git"
   },
   "author": "Zarema Khalilova",
   "license": "MIT",
-  "homepage": "https://github.com/Zmoki/sexy-dropdown",
+  "homepage": "https://github.com/Zmoki/react-ui-dropdown",
   "dependencies": {
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",

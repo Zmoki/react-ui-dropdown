@@ -37,10 +37,10 @@ let config = {
   }
 };
 
-// Resolve sexy-dropdown to source
+// Resolve react-ui-dropdown to source
 config.resolve = {
   alias: {
-    "sexy-dropdown": path.join(__dirname, "..", "src"),
+    "react-ui-dropdown": path.join(__dirname, "..", "src"),
     "react": path.join(__dirname, "node_modules", "react")
   }
 };
