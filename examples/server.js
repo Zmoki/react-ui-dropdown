@@ -6,7 +6,7 @@ if (!process.env.EXAMPLE_NAME) {
 
 const express = require("express");
 const path = require("path");
-const wordsChecker = require("./../lib/words-checker").default;
+const itemChecker = require("./../lib/item-checker").default;
 
 const example = process.env.EXAMPLE_NAME;
 const mode = process.env.NODE_ENV || "development";
@@ -37,22 +37,7 @@ app.get("/items-search", (req, res) => {
   let items = require("./data.json").items;
 
   if (q.length) {
-    let words = wordsChecker.getConditionalWords(q);
-
-    items = items.filter(item => {
-      for (let field of searchIn) {
-        if(item[field] == undefined){
-          return false;
-        }
-        const value = item[field].toLowerCase();
-        for (let word of words) {
-          if (~value.search(word)) {
-            return true;
-          }
-        }
-      }
-      return false;
-    });
+    items = items.filter(item => itemChecker.check(q, item, searchIn));
   }
 
   items = items.map(item => {

@@ -2,10 +2,13 @@
   "ecmaFeatures": {
     "arrowFunctions": true,
     "blockBindings": true,
+    "classes": true,
+    "defaultParams": true,
     "forOf": true,
     "modules": true,
     "objectLiteralShorthandMethods": true,
-    "objectLiteralShorthandProperties": true
+    "objectLiteralShorthandProperties": true,
+    "jsx": true
   },
   "rules": {
     "strict": [2, "global"],

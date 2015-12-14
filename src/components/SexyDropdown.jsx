@@ -4,7 +4,7 @@ import Item from "./Item.jsx";
 import SearchInput from "./SearchInput.jsx";
 import SelectedItem from "./SelectedItem.jsx";
 
-import wordsChecker from "./../words-checker";
+import itemChecker from "./../item-checker";
 
 let idCounter = 0;
 
@@ -158,22 +158,10 @@ export default class SexyDropdown extends Component {
     }
 
     let foundItemsKeys = [];
-
-    const words = wordsChecker.getConditionalWords(q);
     const fields = ["title"];
 
     this.state.items.keys.all.forEach(itemKey => {
-      const item = this.state.items.collection[itemKey];
-
-      for (let f = 0; f < fields.length; f++) {
-        const value = item[fields[f]].toLowerCase();
-        for (let w = 0; w < words.length; w++) {
-          if (~value.search(words[w])) {
-            foundItemsKeys.push(itemKey);
-            return;
-          }
-        }
-      }
+      if(itemChecker.check(q, this.state.items.collection[itemKey], fields)) foundItemsKeys.push(itemKey);
     });
 
     if (!this.props.source) {

@@ -1,34 +1,34 @@
 import expect from "expect";
-import wordsChecker from "../src/words-checker";
+import wordConverter from "../src/word-converter";
 
-describe("wordsChecker", ()=> {
+describe("wordConverter", ()=> {
   describe("convertLayout", ()=> {
     it("convert 'рого'", ()=> {
-      expect(wordsChecker.convertLayout("рого")).toEqual("hjuj");
+      expect(wordConverter.convertLayout("рого")).toEqual("hjuj");
     });
     it("convert 'rogo'", ()=> {
-      expect(wordsChecker.convertLayout("rogo")).toEqual("кщпщ");
+      expect(wordConverter.convertLayout("rogo")).toEqual("кщпщ");
     });
     it("convert 'hjuj'", ()=> {
-      expect(wordsChecker.convertLayout("hjuj")).toEqual("рого");
+      expect(wordConverter.convertLayout("hjuj")).toEqual("рого");
     });
     it("convert 'кщпщ''", ()=> {
-      expect(wordsChecker.convertLayout("кщпщ")).toEqual("rogo");
+      expect(wordConverter.convertLayout("кщпщ")).toEqual("rogo");
     });
   });
 
   describe("translit", ()=> {
-    it("convert 'рого'", ()=> {
-      expect(wordsChecker.translit("рого")).toEqual("rogo");
+    it("translit 'рого'", ()=> {
+      expect(wordConverter.translit("рого")).toEqual("rogo");
     });
-    it("convert 'rogo'", ()=> {
-      expect(wordsChecker.translit("rogo")).toEqual("рого");
+    it("translit 'rogo'", ()=> {
+      expect(wordConverter.translit("rogo")).toEqual("рого");
     });
   });
 
   describe("getConditionalWords", ()=>{
     it("convert 'рого'", ()=>{
-      expect(wordsChecker.getConditionalWords("рого")).toEqual([
+      expect(wordConverter.getConditionalWords("рого")).toEqual([
         "рого",
         "hjuj",
         "хйуй",
@@ -37,7 +37,7 @@ describe("wordsChecker", ()=> {
       ]);
     });
     it("convert 'hjuj'", ()=>{
-      expect(wordsChecker.getConditionalWords("hjuj")).toEqual([
+      expect(wordConverter.getConditionalWords("hjuj")).toEqual([
         "hjuj",
         "рого",
         "rogo",
@@ -46,7 +46,7 @@ describe("wordsChecker", ()=> {
       ]);
     });
     it("convert 'rogo'", ()=>{
-      expect(wordsChecker.getConditionalWords("rogo")).toEqual([
+      expect(wordConverter.getConditionalWords("rogo")).toEqual([
         "rogo",
         "кщпщ",
         "kshhpshh",
@@ -55,7 +55,7 @@ describe("wordsChecker", ()=> {
       ]);
     });
     it("convert 'кщпщ'", ()=>{
-      expect(wordsChecker.getConditionalWords("кщпщ")).toEqual([
+      expect(wordConverter.getConditionalWords("кщпщ")).toEqual([
         "кщпщ",
         "rogo",
         "рого",
