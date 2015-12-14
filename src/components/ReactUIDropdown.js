@@ -14,6 +14,31 @@ function uniqueId(prefix) {
   return prefix + id;
 }
 
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not be triggered.
+ * The function will be called after it stops being called for N milliseconds.
+ *
+ * Code taken from article {@link https://davidwalsh.name/javascript-debounce-function|JavaScript Debounce Function}.
+ *
+ * @param {function} func - Function which will need to call
+ * @param {number} wait - Milliseconds after func will be called
+ * @returns {Function}
+ */
+function debounce(func, wait) {
+  let timeout;
+  return function() {
+    let context = this, args = arguments;
+    let later = function() {
+      timeout = null;
+      func.apply(context, args);
+    };
+    let callNow = !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
 export default class ReactUIDropdown extends Component {
   constructor(props) {
     super(props);
@@ -50,6 +75,8 @@ export default class ReactUIDropdown extends Component {
         });
       });
     }
+
+    this.sendRequest = debounce(this.sendRequest, 500);
   }
 
   componentWillUpdate(nextProps, nextState){
@@ -191,13 +218,17 @@ export default class ReactUIDropdown extends Component {
 
   handleSearchInputChange(e) {
     const searchValue = e.target.value;
+
+    this.setState({
+      searchValue
+    });
+
     const updateState = (displayedItemsKeys) => {
       let items = this.state.items;
       items.keys.displayed = displayedItemsKeys;
 
       this.setState({
         items,
-        searchValue,
         focusedItem: items.keys.displayed.filter(itemKey => !~items.keys.selected.indexOf(itemKey))[0] || null
       });
     };
