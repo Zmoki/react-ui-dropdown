@@ -1,13 +1,19 @@
-var argv = require("yargs").argv;
-var path = require("path");
-var webpack = require("webpack");
+"use strict";
 
-var example = argv.example;
+if (!process.env.EXAMPLE_NAME) {
+  throw new Error("You don't choose example. Please set environment variable EXAMPLE_NAME.");
+}
 
-module.exports = {
-  devtool: "cheap-module-eval-source-map",
+const webpack = require("webpack");
+const StringReplacePlugin = require("string-replace-webpack-plugin");
+
+const path = require("path");
+
+const example = process.env.EXAMPLE_NAME;
+const mode = process.env.NODE_ENV || "development";
+
+let config = {
   entry: [
-    "webpack-hot-middleware/client",
     "./" + example + "/index"
   ],
   output: {
@@ -16,48 +22,82 @@ module.exports = {
     publicPath: "/static/"
   },
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.optimize.OccurenceOrderPlugin()
   ],
   module: {
-    loaders: [{
-      test: [/\.jsx$/, /\.js$/],
-      loaders: ["babel?presets[]=react,presets[]=es2015", "webpack-module-hot-accept"],
-      exclude: /node_modules/,
-      include: __dirname
-    }]
+    loaders: [
+      {
+        test: [/\.jsx$/, /\.js$/],
+        loader: "babel",
+        query: {
+          presets: ["react", "es2015"]
+        }
+      }
+    ]
   }
 };
 
+// Resolve sexy-dropdown to source
+config.resolve = {
+  alias: {
+    "sexy-dropdown": path.join(__dirname, "..", "src"),
+    "react": path.join(__dirname, "node_modules", "react")
+  }
+};
 
-// When inside sexy-dropdown repo, prefer src to compiled version.
-// You can safely delete these lines in your project.
-var sexyDropdownSrc = path.join(__dirname, "..", "src");
-var fs = require("fs");
-if (fs.existsSync(sexyDropdownSrc)) {
-  // Resolve sexy-dropdown to source
-  module.exports.resolve = {
-    alias: {
-      "sexy-dropdown": sexyDropdownSrc,
-      "react": path.join(__dirname, "node_modules", "react")
+if (mode == "development") {
+  config.devtool = "cheap-module-eval-source-map";
+
+  config.entry = ["webpack-hot-middleware/client?noInfo=true"].concat(config.entry);
+
+  config.plugins = config.plugins.concat([
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
+  ]);
+
+  config.module.loaders = [
+    {
+      test: /\.js$/,
+      loader: "webpack-module-hot-accept",
+      exclude: /node_modules/,
+      include: __dirname
     }
-  };
-  // Compile sexy-dropdown from source
-  module.exports.module.loaders.push({
-    test: /\.jsx$/,
-    include: sexyDropdownSrc,
-    loader: "babel",
-    query: {
-      presets: ["react", "es2015"]
-    }
-  });
-  module.exports.module.loaders.push({
-    test: /\.js$/,
-    include: sexyDropdownSrc,
-    loader: "babel",
-    query: {
-      presets: ["es2015"]
-    }
-  });
+  ].concat(config.module.loaders);
 }
+
+if (mode == "production") {
+  config.devtool = "source-map";
+
+  config.entry = [
+    "console-polyfill",
+    "es5-shim",
+    "es5-shim/es5-sham",
+    "html5shiv"
+  ].concat(config.entry);
+
+  for (let loader of config.module.loaders) {
+    if (loader.loader == "babel") {
+      loader.query.plugins = (loader.query.plugins || []).concat([
+        "transform-es3-property-literals",
+        "transform-es3-member-expression-literals"
+      ]);
+    }
+  }
+
+  config.plugins = config.plugins.concat([new StringReplacePlugin()]);
+  config.module.postLoaders = (config.module.postLoaders || []).concat([{
+    test: [/\.jsx$/, /\.js$/],
+    loader: StringReplacePlugin.replace({
+      replacements: [
+        {
+          pattern: /\.default(?![a-z])/ig,
+          replacement: () => {
+            return "['default']";
+          }
+        }
+      ]
+    })
+  }])
+}
+
+module.exports = config;

@@ -12,25 +12,25 @@ describe("APIAPISearchItems", ()=> {
     });
 
     it("return items by word 'Иван'", ()=> {
-      let items = APISearchItems.getItems('Иван');
+      let items = APISearchItems.getItems("Иван");
 
       expect(Object.keys(items).length).toBe(17);
     });
 
     it("return items by word 'иван'", ()=> {
-      let items = APISearchItems.getItems('иван');
+      let items = APISearchItems.getItems("иван");
 
       expect(Object.keys(items).length).toBe(17);
     });
 
     it("return items by word 'bdfy'", ()=> {
-      let items = APISearchItems.getItems('bdfy');
+      let items = APISearchItems.getItems("bdfy");
 
       expect(Object.keys(items).length).toBe(17);
     });
 
     it("return items by word 'rogo'", ()=> {
-      let items = APISearchItems.getItems('rogo');
+      let items = APISearchItems.getItems("rogo");
 
       expect(Object.keys(items).length).toBe(1);
     });

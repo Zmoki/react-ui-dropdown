@@ -1,30 +1,39 @@
 "use strict";
 
-var argv = require("yargs").argv;
-var wordsChecker = require("./../lib/words-checker").default;
-
-if (!argv.example) {
-  throw new Error("You don't choose example. Please pass 'npm start -- --example=examplename'.");
+if (!process.env.EXAMPLE_NAME) {
+  throw new Error("You don't choose example. Please set environment variable EXAMPLE_NAME.");
 }
-var example = argv.example;
 
-var path = require("path");
+const express = require("express");
+const path = require("path");
+const wordsChecker = require("./../lib/words-checker").default;
 
-var webpack = require("webpack");
-var webpackDevMiddleware = require("webpack-dev-middleware");
-var webpackHotMiddleware = require("webpack-hot-middleware");
-var config = require("./webpack.config");
+const example = process.env.EXAMPLE_NAME;
+const mode = process.env.NODE_ENV || "development";
+const port = process.env.PORT || 3000;
 
-var app = new (require("express"))();
-var port = 3000;
+let app = express();
 
-var compiler = webpack(config);
-app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
-app.use(webpackHotMiddleware(compiler));
+if(mode == "development") {
+  const webpack = require("webpack");
+  const webpackDevMiddleware = require("webpack-dev-middleware");
+  const webpackHotMiddleware = require("webpack-hot-middleware");
+  const config = require("./webpack.config");
 
-app.get("/items-search", function(req, res) {
+  const compiler = webpack(config);
+
+  app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
+  app.use(webpackHotMiddleware(compiler));
+}
+
+if(mode == "production"){
+  app.use("/static", express.static(path.join(__dirname, example, "dist")));
+}
+
+app.get("/items-search", (req, res) => {
   const q = req.query.q || "";
   const searchIn = req.query["search_in"] ? req.query["search_in"].split(",") : ["first_name", "last_name", "domain"];
+
   let items = require("./data.json").items;
 
   if (q.length) {
@@ -59,11 +68,11 @@ app.get("/items-search", function(req, res) {
   });
 });
 
-app.get("/", function(req, res) {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, example, "index.html"));
 });
 
-app.listen(port, function(error) {
+app.listen(port, (error) => {
   if (error) {
     console.error(error)
   } else {

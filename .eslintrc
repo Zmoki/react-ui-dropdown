@@ -1,10 +1,15 @@
 {
   "ecmaFeatures": {
+    "arrowFunctions": true,
+    "blockBindings": true,
+    "forOf": true,
     "modules": true,
-    "arrowFunctions": true
+    "objectLiteralShorthandMethods": true,
+    "objectLiteralShorthandProperties": true
   },
   "rules": {
     "strict": [2, "global"],
-    "quotes": [2, "double"]
+    "quotes": [2, "double"],
+    "no-var": 2
   }
 }

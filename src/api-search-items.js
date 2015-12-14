@@ -1,6 +1,6 @@
-import wordsChecker from './words-checker';
+import wordsChecker from "./words-checker";
 
-import { items } from './data/items';
+import { items } from "./data/items";
 
 const APISearchItems = {
   getItems(word, length){
@@ -13,7 +13,7 @@ const APISearchItems = {
         let hasWord = false;
 
         for (let field in item) {
-          if (typeof item[field] == 'string') {
+          if (typeof item[field] == "string") {
             let iv = item[field].toLowerCase();
             for(let i = 0; i < words.length; i++){
               if(iv.search(words[i]) != -1){
