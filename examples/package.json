@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
+    "prestart": "npm run build",
     "start": "node server.js"
   },
   "repository": {
