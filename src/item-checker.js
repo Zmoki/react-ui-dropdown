@@ -21,7 +21,7 @@ const itemChecker = {
 
     for (let f = 0; f < fields.length; f++) {
       if(typeof item[fields[f]] == "string") {
-        const value = item[field].toLowerCase();
+        const value = item[fields[f]].toLowerCase();
 
         for (let w = 0; w < currentWords.length; w++) {
           if (~value.search(currentWords[w])) return true;
