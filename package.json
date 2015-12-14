@@ -34,6 +34,9 @@
   "author": "Zarema Khalilova",
   "license": "MIT",
   "homepage": "https://github.com/Zmoki/react-ui-dropdown",
+  "dependencies": {
+    "convert-layout": "^0.4.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.3.17",
     "babel-core": "^6.3.17",
@@ -57,8 +60,5 @@
         "*.js"
       ]
     }
-  ],
-  "peerDependencies": {
-    "convert-layout": "^0.4.1"
-  }
+  ]
 }
