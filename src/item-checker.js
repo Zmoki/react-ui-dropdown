@@ -19,12 +19,12 @@ const itemChecker = {
 
     fields = (typeof fields == "string") ? [fields] : (fields || Object.keys(item));
 
-    for (let field of fields) {
-      if(typeof item[field] == "string") {
+    for (let f = 0; f < fields.length; f++) {
+      if(typeof item[fields[f]] == "string") {
         const value = item[field].toLowerCase();
 
-        for (let w of currentWords) {
-          if (~value.search(w)) return true;
+        for (let w = 0; w < currentWords.length; w++) {
+          if (~value.search(currentWords[w])) return true;
         }
       }
     }
