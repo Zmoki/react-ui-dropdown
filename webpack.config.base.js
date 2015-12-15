@@ -1,5 +1,7 @@
 "use strict";
 
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 module.exports = {
   module: {
     loaders: [
@@ -10,6 +12,10 @@ module.exports = {
         query: {
           presets: ["react", "es2015"]
         }
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader")
       }
     ]
   },
@@ -23,5 +29,6 @@ module.exports = {
   },
   externals: {
     react: "commonjs react"
-  }
+  },
+  postcss: [require("precss")]
 };

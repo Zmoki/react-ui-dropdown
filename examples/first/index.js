@@ -1,5 +1,7 @@
 "use strict";
 
+import "./index.css";
+
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactUIDropdown from "react-ui-dropdown";

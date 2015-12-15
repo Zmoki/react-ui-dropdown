@@ -6,11 +6,14 @@ if (!process.env.EXAMPLE_NAME) {
 
 const webpack = require("webpack");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const path = require("path");
 
 const example = process.env.EXAMPLE_NAME;
 const mode = process.env.NODE_ENV || "development";
+
+const cssLoader = "style-loader!css-loader!postcss-loader";
 
 let config = {
   entry: [
@@ -32,9 +35,14 @@ let config = {
         query: {
           presets: ["react", "es2015"]
         }
+      },
+      {
+        test: /\.css$/,
+        loader: (mode == "production") ? ExtractTextPlugin.extract(cssLoader) : cssLoader
       }
     ]
-  }
+  },
+  postcss: [require("precss")]
 };
 
 // Resolve react-ui-dropdown to source
@@ -86,7 +94,11 @@ if (mode == "production") {
     }
   }
 
-  config.plugins = config.plugins.concat([new StringReplacePlugin()]);
+  config.plugins = config.plugins.concat([
+    new ExtractTextPlugin("bundle.css"),
+    new StringReplacePlugin()
+  ]);
+
   config.module.postLoaders = (config.module.postLoaders || []).concat([{
     test: /\.js$/,
     loader: StringReplacePlugin.replace({
