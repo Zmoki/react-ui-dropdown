@@ -6,8 +6,19 @@ import SelectedItem from "./SelectedItem";
 
 import itemChecker from "./../item-checker";
 
+/**
+ * Variable for store count of components in the scope.
+ *
+ * @type {Number}
+ */
 let idCounter = 0;
 
+/**
+ * Return unique id for component. Useful for id in HTML.
+ *
+ * @param {String} prefix
+ * @returns {String}
+ */
 function uniqueId(prefix) {
   let id = ++idCounter;
 
@@ -20,8 +31,8 @@ function uniqueId(prefix) {
  *
  * Code taken from article {@link https://davidwalsh.name/javascript-debounce-function|JavaScript Debounce Function}.
  *
- * @param {function} func - Function which will need to call
- * @param {number} wait - Milliseconds after func will be called
+ * @param {Function} func - Function which will need to call
+ * @param {Number} wait - Milliseconds after func will be called
  * @returns {Function}
  */
 function debounce(func, wait) {
@@ -59,8 +70,8 @@ export default class ReactUIDropdown extends Component {
   }
 
   componentDidMount() {
-    if (this.props.source) {
-      this.sendRequest(this.props.source, (xhr) => {
+    if (this.props.source && this.props.source.url) {
+      this.sendRequest(this.props.source.url, (xhr) => {
         const response = JSON.parse(xhr.responseText);
 
         if (!response.items || !response.items.length) {
@@ -79,20 +90,27 @@ export default class ReactUIDropdown extends Component {
     this.sendRequest = debounce(this.sendRequest, 500);
   }
 
-  componentWillUpdate(nextProps, nextState){
-    if(this.state.focusedItem != nextState.focusedItem) {
+  componentWillUpdate(nextProps, nextState) {
+    if (this.state.focusedItem != nextState.focusedItem) {
       let item = this.refs["item-" + this.state.focusedItem];
       if (item) item.setFocused(false);
     }
   }
 
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.focusedItem != this.state.focusedItem) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.focusedItem != this.state.focusedItem) {
       let item = this.refs["item-" + this.state.focusedItem];
       if (item) item.setFocused(true);
     }
   }
 
+  /**
+   * Transform array of data for suitable collection of items.
+   *
+   * @param {Array} data
+   * @param {Number} maxDisplayedItems
+   * @returns {{collection: {}, keys: {all: Array, started: Array, displayed: Array, selected: Array}}}
+   */
   getItemsFromData(data, maxDisplayedItems) {
     maxDisplayedItems = maxDisplayedItems || this.state.maxDisplayedItems;
 
@@ -118,22 +136,33 @@ export default class ReactUIDropdown extends Component {
     return items;
   }
 
+  /**
+   * Return keys of displayed items from state, which not selected.
+   *
+   * @returns {Array}
+   */
   getNotSelectedItems() {
     return this.state.items.keys.displayed.filter(itemKey => !~this.state.items.keys.selected.indexOf(itemKey));
   }
 
+  /**
+   * Function create an ajax GET request to url and give response in callback.
+   *
+   * @param {String} url
+   * @param {Function} callback
+   */
   sendRequest(url, callback) {
     let xhr;
     try {
       xhr = new ActiveXObject("Msxml2.XMLHTTP");
-    } catch (e) {
+    } catch(e) {
       try {
         xhr = new ActiveXObject("Microsoft.XMLHTTP");
-      } catch (E) {
+      } catch(E) {
         xhr = false;
       }
     }
-    if (!xhr && typeof XMLHttpRequest!="undefined") {
+    if (!xhr && typeof XMLHttpRequest != "undefined") {
       xhr = new XMLHttpRequest();
     }
 
@@ -141,7 +170,7 @@ export default class ReactUIDropdown extends Component {
 
     xhr.onreadystatechange = function() {
       if (xhr.readyState == 4) {
-        if(xhr.status == 200) {
+        if (xhr.status == 200) {
           callback(xhr);
         }
       }
@@ -150,6 +179,12 @@ export default class ReactUIDropdown extends Component {
     xhr.send();
   }
 
+  /**
+   * Add itemKey to array of selected items in state.
+   * If component is multiple, itemKey will be added to array, else will create array contained only one selected item.
+   *
+   * @param {Number} itemKey
+   */
   addItemToSelected(itemKey) {
     let items = this.state.items;
     items.keys.selected = this.state.multiple ? this.state.items.keys.selected.concat(itemKey) : [itemKey];
@@ -159,6 +194,11 @@ export default class ReactUIDropdown extends Component {
     });
   }
 
+  /**
+   * Remove itemKey from array of selected items in state.
+   *
+   * @param {Number} itemKey
+   */
   removeItemFromSelected(itemKey) {
     let s = this.state.items.keys.selected;
 
@@ -173,12 +213,24 @@ export default class ReactUIDropdown extends Component {
     });
   }
 
+  /**
+   * Update focusedItem in state.
+   *
+   * @param {Number} itemKey
+   */
   setFocusedItem(itemKey) {
+    if (this.state.focusedItem == itemKey) return;
     this.setState({
       focusedItem: itemKey
     });
   }
 
+  /**
+   * Search item, which contain string like q. Search in local and on server.
+   *
+   * @param {String} q
+   * @param {Function} callback
+   */
   goSearch(q, callback) {
     if (!q.length) {
       return;
@@ -188,15 +240,15 @@ export default class ReactUIDropdown extends Component {
     const fields = ["title"];
 
     this.state.items.keys.all.forEach(itemKey => {
-      if(itemChecker.check(q, this.state.items.collection[itemKey], fields)) foundItemsKeys.push(itemKey);
+      if (itemChecker.check(q, this.state.items.collection[itemKey], fields)) foundItemsKeys.push(itemKey);
     });
 
-    if (!this.props.source) {
+    if (!this.props.source || !this.props.source.url) {
       callback(foundItemsKeys);
       return;
     }
 
-    this.sendRequest(`${this.props.source}?q=${q}&search_in=domain`, (xhr) => {
+    this.sendRequest(`${this.props.source.url}?q=${q}&search_in=${this.props.source.searchIn}`, (xhr) => {
       const response = JSON.parse(xhr.responseText);
       const serverFoundItemsKeys = response.items.map(item => item.id);
 
@@ -208,11 +260,16 @@ export default class ReactUIDropdown extends Component {
     });
   }
 
+  /**
+   * Show or hide list of items.
+   */
   toggleItems() {
-    this.refs.items.toggleHidden(()=> {}, ()=> {
-      this.setState({
-        focusedItem: this.getNotSelectedItems()[0] || null
-      });
+    this.refs.items.toggleHidden((isHidden)=> {
+      if(!isHidden) {
+        this.setState({
+          focusedItem: this.getNotSelectedItems()[0] || null
+        });
+      }
     });
   }
 
@@ -279,8 +336,8 @@ export default class ReactUIDropdown extends Component {
 
         <div className="dropdown-selector">
           {items.keys.selected.map(itemKey =>
-          <SelectedItem key={itemKey} {...items.collection[itemKey]}
-                        handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
+            <SelectedItem key={itemKey} {...items.collection[itemKey]}
+                          handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
 
           <SearchInput dropdownId={dropdownId} value={searchValue}
                        handleChange={this.handleSearchInputChange.bind(this)}
@@ -290,11 +347,11 @@ export default class ReactUIDropdown extends Component {
 
         <Items ref="items" dropdownId={dropdownId} focusedItem={focusedItem}>
           {items.keys.displayed.map(itemKey =>
-          <Item ref={"item-" + itemKey} key={itemKey} dropdownId={dropdownId} {...items.collection[itemKey]}
-                selected={~items.keys.selected.indexOf(itemKey)}
-                showImages={showImages}
-                handleItemClick={this.addItemToSelected.bind(this, itemKey)}
-                handleItemHover={this.setFocusedItem.bind(this, itemKey)}/>)}
+            <Item ref={"item-" + itemKey} key={itemKey} dropdownId={dropdownId} {...items.collection[itemKey]}
+                  selected={~items.keys.selected.indexOf(itemKey)}
+                  showImages={showImages}
+                  handleItemClick={this.addItemToSelected.bind(this, itemKey)}
+                  handleItemHover={this.setFocusedItem.bind(this, itemKey)}/>)}
         </Items>
       </div>
     )
@@ -303,7 +360,10 @@ export default class ReactUIDropdown extends Component {
 
 ReactUIDropdown.propTypes = {
   items: PropTypes.array,
-  source: PropTypes.string,
+  source: PropTypes.shape({
+    url: React.PropTypes.string,
+    searchIn: React.PropTypes.string
+  }),
   maxDisplayedItems: PropTypes.number,
   label: PropTypes.string,
   showImages: PropTypes.bool,

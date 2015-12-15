@@ -9,17 +9,13 @@ export default class Items extends Component {
     }
   }
 
-  toggleHidden(handleShow, handleHidden) {
-    let hidden = !this.state.hidden;
+  toggleHidden(callback) {
+    let isHidden = !this.state.hidden;
 
-    if (!hidden) {
-      handleShow();
-    } else {
-      handleHidden();
-    }
+    callback(isHidden);
 
     this.setState({
-      hidden: hidden
+      hidden: isHidden
     });
   }
 

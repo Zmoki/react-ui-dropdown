@@ -9,7 +9,7 @@ ReactDOM.render(
   <div>
     <ReactUIDropdown
       label="Items"
-      source="/items-search"
+      source={{url: "/items-search", searchIn: "domain"}}
       maxDisplayedItems={5}
       showImages={false}/>
   </div>,
