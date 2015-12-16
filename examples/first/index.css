@@ -1,4 +1,7 @@
 .container{
-  width: 300px;
+  width: 400px;
   margin: 40px auto;
+}
+h1{
+  text-align: center;
 }

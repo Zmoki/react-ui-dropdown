@@ -35,9 +35,11 @@ export default class Item extends Component {
            role="option" tabIndex="-1"
            onMouseDown={handleItemClick}
            onMouseMove={handleItemHover}>
-        {showImages && image && <img className="dropdown-item-image" src={image} alt={title}/>}
-        <div className="dropdown-item-title">{title}</div>
-        {subTitle && <div className="dropdown-item-subtitle">{subTitle}</div>}
+        {showImages && image && <img className="dropdown-item-image" src={image} alt=""/>}
+        <div className="dropdown-item-title">
+          {title}
+          {subTitle && <div className="dropdown-item-subtitle">{subTitle}</div>}
+        </div>
       </div>
     )
   }

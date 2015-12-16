@@ -65,6 +65,7 @@ export default class ReactUIDropdown extends Component {
       items,
       focusedItem: items.keys.displayed[0] || null,
       label: props.label || "",
+      placeholder: props.placeholder || "",
       searchValue: "",
       multiple: props.multiple !== false,
       showImages: props.showImages !== false
@@ -328,7 +329,7 @@ export default class ReactUIDropdown extends Component {
   }
 
   render() {
-    const { dropdownId, items, focusedItem, label, searchValue, showImages } = this.state;
+    const { dropdownId, items, focusedItem, label, placeholder, searchValue, showImages } = this.state;
 
     return (
       <div className="dropdown">
@@ -341,7 +342,7 @@ export default class ReactUIDropdown extends Component {
             <SelectedItem key={itemKey} {...items.collection[itemKey]}
                           handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
 
-          <SearchInput dropdownId={dropdownId} value={searchValue}
+          <SearchInput dropdownId={dropdownId} value={searchValue} placeholder={placeholder}
                        handleChange={this.handleSearchInputChange.bind(this)}
                        handleFocus={this.toggleItems.bind(this)}
                        handleKeyDown={this.handleSearchInputKeyStroke.bind(this)}/>
@@ -368,6 +369,7 @@ ReactUIDropdown.propTypes = {
   }),
   maxDisplayedItems: PropTypes.number,
   label: PropTypes.string,
+  placeholder: PropTypes.string,
   showImages: PropTypes.bool,
   multiple: PropTypes.bool
 };
