@@ -13,8 +13,6 @@ const path = require("path");
 const example = process.env.EXAMPLE_NAME;
 const mode = process.env.NODE_ENV || "development";
 
-const cssLoader = "style-loader!css-loader!postcss-loader";
-
 let config = {
   entry: [
     "./" + example + "/index"
@@ -38,7 +36,7 @@ let config = {
       },
       {
         test: /\.css$/,
-        loader: (mode == "production") ? ExtractTextPlugin.extract(cssLoader) : cssLoader
+        loader: (mode == "production") ? ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader") : "style-loader!css-loader!postcss-loader"
       }
     ]
   },
@@ -73,6 +71,10 @@ if (mode == "development") {
       include: __dirname
     }
   ].concat(config.module.loaders);
+
+  config.postcss = config.postcss.concat([
+    require("autoprefixer")
+  ]);
 }
 
 if (mode == "production") {
@@ -111,7 +113,14 @@ if (mode == "production") {
         }
       ]
     })
-  }])
+  }]);
+
+  config.postcss = config.postcss.concat([
+    require("autoprefixer")({
+      browsers: ["last 2 versions", "IE >= 8"]
+    }),
+    require("postcss-calc")
+  ]);
 }
 
 module.exports = config;

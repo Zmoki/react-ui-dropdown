@@ -30,5 +30,5 @@ module.exports = {
   externals: {
     react: "commonjs react"
   },
-  postcss: [require("precss")]
+  postcss: [require("precss"), require("autoprefixer")]
 };

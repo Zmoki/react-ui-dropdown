@@ -16,6 +16,7 @@
   "license": "MIT",
   "homepage": "https://github.com/Zmoki/react-ui-dropdown",
   "dependencies": {
+    "autoprefixer": "^6.1.2",
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",
     "babel-plugin-transform-es3-member-expression-literals": "^6.3.13",
@@ -29,6 +30,7 @@
     "extract-text-webpack-plugin": "^0.9.1",
     "html5shiv": "^3.7.3",
     "normalize.css": "^3.0.3",
+    "postcss-calc": "^5.0.0",
     "postcss-loader": "^0.8.0",
     "precss": "^1.3.0",
     "react": "^0.14.3",

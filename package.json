@@ -22,7 +22,7 @@
     "test:watch": "npm run test -- --watch",
     "check": "npm run lint && npm run test",
     "build:lib:js": "babel src --out-dir lib",
-    "build:lib:css": "mkdirp lib/components/stylesheets && postcss -u precss -d lib/components/stylesheets src/**/**/*.css",
+    "build:lib:css": "mkdirp lib/components/stylesheets && postcss -u precss -u autoprefixer -d lib/components/stylesheets src/**/**/*.css",
     "build:lib": "npm run build:lib:js && npm run build:lib:css",
     "build:dist": "webpack src/index.js --config webpack.config.development.js",
     "build:dist:min": "webpack src/index.js --config webpack.config.production.js",
@@ -42,6 +42,7 @@
     "convert-layout": "^0.4.1"
   },
   "devDependencies": {
+    "autoprefixer": "^6.1.2",
     "babel-cli": "^6.3.17",
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",

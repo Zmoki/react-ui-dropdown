@@ -7,7 +7,7 @@ export default class SelectedItem extends Component {
     return (
       <div className="dropdown-selected-item">
         <span className="dropdown-item-title">{title}</span>
-        <button className="dropdown-item-close" type="button" onClick={handleItemClick}>⨯</button>
+        <button className="dropdown-item-close" type="button" onClick={handleItemClick}>&#215;</button>
       </div>
     )
   }
