@@ -57,7 +57,7 @@ export default class ReactUIDropdown extends Component {
   constructor(props) {
     super(props);
 
-    const items = this.transformArrayToItems(props.initialItems);
+    const items = this.transformArrayToItems(props.initialItems, props.maxDisplayedItems);
 
     this.state = {
       dropdownId: uniqueId("dropdown-") + "-",
@@ -88,7 +88,7 @@ export default class ReactUIDropdown extends Component {
    *
    * @returns {Array}
    */
-  get notSelectedItems() {
+  getNotSelectedItems() {
     return this.state.items.keys.displayed.filter(itemKey => !~this.state.items.keys.selected.indexOf(itemKey));
   }
 
@@ -97,7 +97,7 @@ export default class ReactUIDropdown extends Component {
    *
    * @returns {boolean}
    */
-  get hasRemoteSearch() {
+  hasRemoteSearch() {
     return !!(this.props.remoteSearch && this.props.remoteSearch.url);
   }
 
@@ -130,7 +130,7 @@ export default class ReactUIDropdown extends Component {
 
   handleSearchInputKeyDown(e) {
     const focusedItem = this.state.focusedItem;
-    const displayedItems = this.notSelectedItems;
+    const displayedItems = this.getNotSelectedItems();
     const focusedItemIndex = displayedItems.indexOf(focusedItem);
     const updateState = (focusedItemIndex) => {
       this.setState({
@@ -156,7 +156,7 @@ export default class ReactUIDropdown extends Component {
   handleSearchInputFocus() {
     this.refs.items.setHidden(false);
     this.setState({
-      focusedItem: this.notSelectedItems[0] || null
+      focusedItem: this.getNotSelectedItems()[0] || null
     });
     let item = this.refs["item-" + this.state.focusedItem];
     if (item) item.setFocused(true);
@@ -189,7 +189,9 @@ export default class ReactUIDropdown extends Component {
    * @param {Array} data
    * @returns {{collection: {}, keys: {all: Array, started: Array, displayed: Array, selected: Array}}}
    */
-  transformArrayToItems(data) {
+  transformArrayToItems(data, maxDisplayedItems) {
+    maxDisplayedItems = maxDisplayedItems || this.props.maxDisplayedItems;
+
     let items = {
       collection: {},
       keys: {
@@ -202,7 +204,9 @@ export default class ReactUIDropdown extends Component {
 
     if (data && data.length) {
       items.keys.all = data.map(item => item.id);
-      items.keys.started = items.keys.displayed = items.keys.all.slice(0, this.props.maxDisplayedItems);
+      const startedItems = items.keys.all.slice(0, maxDisplayedItems);
+      items.keys.started = startedItems;
+      items.keys.displayed = startedItems;
       items.collection = data.reduce((obj, item) => {
         obj[item.id] = item;
         return obj;
@@ -264,7 +268,7 @@ export default class ReactUIDropdown extends Component {
       if (itemChecker.check(q, this.state.items.collection[itemKey], fields)) foundItemsKeys.push(itemKey);
     });
 
-    if (!this.hasRemoteSearch) {
+    if (!this.hasRemoteSearch()) {
       callback(foundItemsKeys);
       return;
     }
@@ -370,7 +374,7 @@ ReactUIDropdown.propTypes = {
     ])
   }),
   maxDisplayedItems: PropTypes.number,
-  label: PropTypes.string,
+  label: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   showImages: PropTypes.bool,
   multiple: PropTypes.bool

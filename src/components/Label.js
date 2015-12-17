@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from "react";
 
 export default class Label extends Component {
-  get id() {
+  getId() {
     return this.props.idPrefix + "label"
   }
 
-  get htmlFor() {
+  getInputId() {
     return this.props.idPrefix + "search-input"
   }
 
@@ -13,8 +13,8 @@ export default class Label extends Component {
     return (
       <label
         className="dropdown-label"
-        id={this.id}
-        htmlFor={this.htmlFor}>
+        id={this.getId()}
+        htmlFor={this.getInputId()}>
         {this.props.children}
       </label>
     )

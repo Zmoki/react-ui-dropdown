@@ -75,10 +75,6 @@ $spacing: 2px;
     display: flex;
     padding: calc(2 * $spacing);
 
-    &[hidden] {
-      display: none;
-    }
-
     &.selected {
       background: color($borderColor l(95%));
     }
@@ -89,6 +85,7 @@ $spacing: 2px;
   }
 
   .dropdown-item-image {
+    width: calc(20 * $spacing);
     height: calc(20 * $spacing);
     margin-right: calc(2 * $spacing);
   }

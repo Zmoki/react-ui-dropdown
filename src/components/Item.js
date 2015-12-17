@@ -9,19 +9,19 @@ export default class Item extends Component {
     }
   }
 
-  get id() {
+  getId() {
     return this.props.idPrefix + "item-" + this.props.id;
   }
 
-  get className() {
+  getClassName() {
     return `dropdown-item${this.state.focused ? " selected" : ""}`
   }
 
-  get hasImages() {
+  hasImages() {
     return this.props.showImages && !!this.props.image;
   }
 
-  get hasSubtitle() {
+  hasSubtitle() {
     return !!this.props.subtitle;
   }
 
@@ -34,21 +34,22 @@ export default class Item extends Component {
   render() {
     return (
       <div
-        className={this.className}
-        id={this.id}
+        className={this.getClassName()}
+        id={this.getId()}
         hidden={this.props.selected}
+        style={this.props.selected ? { display: "none"} : {}}
         role="option"
         tabIndex="-1"
         onMouseDown={this.props.onClick}
         onMouseMove={this.props.onHover}>
-        {this.hasImages
+        {this.hasImages()
         && <img
           className="dropdown-item-image"
           src={this.props.image}
           alt=""/>}
         <div className="dropdown-item-title">
           {this.props.title}
-          {this.hasSubtitle
+          {this.hasSubtitle()
           && <div className="dropdown-item-subtitle">{this.props.subTitle}</div>}
         </div>
       </div>

@@ -9,11 +9,11 @@ export default class Items extends Component {
     }
   }
 
-  get id() {
+  getId() {
     return this.props.idPrefix + "items";
   }
 
-  get focusedItemId() {
+  getFocusedItemId() {
     return this.props.focusedItem ? this.props.idPrefix + "item-" + this.props.focusedItem : "";
   }
 
@@ -27,11 +27,12 @@ export default class Items extends Component {
     return (
       <div
         className="dropdown-items"
-        id={this.id}
+        id={this.getId()}
         hidden={this.state.hidden}
+        style={this.state.hidden ? { display: "none"} : {}}
         role="listbox"
         tabIndex="-1"
-        aria-activedescendant={this.focusedItemId}>
+        aria-activedescendant={this.getFocusedItemId()}>
         {this.props.children}
       </div>
     )

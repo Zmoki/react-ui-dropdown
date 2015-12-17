@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from "react";
 
 export default class SearchInput extends Component {
-  get id() {
+  getId() {
     return this.props.idPrefix + "search-input";
   }
 
-  get itemsId() {
+  getItemsId() {
     return this.props.idPrefix + "items";
   }
 
@@ -13,12 +13,12 @@ export default class SearchInput extends Component {
     return (
       <input
         className="dropdown-search-input"
-        id={this.id}
+        id={this.getId()}
         value={this.props.value}
         placeholder={this.props.placeholder}
         role="combobox"
         aria-autocomplete="list"
-        aria-owns={this.itemsId}
+        aria-owns={this.getItemsId()}
         onChange={this.props.onChange}
         onFocus={this.props.onFocus}
         onBlur={this.props.onBlur}

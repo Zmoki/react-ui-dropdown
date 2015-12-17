@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from "react";
 
 export default class SelectedItem extends Component {
-  get id() {
+  getId() {
     return this.props.idPrefix + "selected-item";
   }
 
   render() {
     return (
-      <div className="dropdown-selected-item" id={this.id}>
+      <div className="dropdown-selected-item" id={this.getId()}>
         <span className="dropdown-item-title">{this.props.title}</span>
         <button
           className="dropdown-item-close"

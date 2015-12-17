@@ -33,12 +33,17 @@ xhr.onreadystatechange = function() {
       if (response.items) {
         ReactDOM.render(
           <div>
-            <ReactUIDropdown initialItems={response.items}/>
             <ReactUIDropdown
+              label="Items (local search)"
+              initialItems={response.items}/>
+            <ReactUIDropdown
+              label="Items (local and remote search)"
               initialItems={response.items}
               remoteSearch={{url, fields: "domain"}}/>
             <ReactUIDropdown
+              label="Item (no images)"
               initialItems={response.items}
+              remoteSearch={{url, fields: "domain"}}
               multiple={false}
               showImages={false}/>
           </div>,
