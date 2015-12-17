@@ -30,6 +30,7 @@ $spacing: 2px;
     border: none;
     flex: 1 1 auto;
     margin: $spacing;
+    min-width: 50%;
     padding: $spacing;
   }
 
@@ -37,6 +38,7 @@ $spacing: 2px;
     background: color($borderColor l(95%));
     border-radius: $spacing;
     flex: 0 1 auto;
+    float: left;
     line-height: 1;
     margin: $spacing;
     padding: $spacing calc(2 * $spacing);
@@ -71,9 +73,12 @@ $spacing: 2px;
 
   .dropdown-item {
     border-bottom: 1px solid color($borderColor l(96%));
+    box-sizing: border-box;
+    clear: both;
     cursor: pointer;
-    display: flex;
+    float: left;
     padding: calc(2 * $spacing);
+    width: 100%;
 
     &.selected {
       background: color($borderColor l(95%));
@@ -85,8 +90,9 @@ $spacing: 2px;
   }
 
   .dropdown-item-image {
-    width: calc(20 * $spacing);
+    float: left;
     height: calc(20 * $spacing);
     margin-right: calc(2 * $spacing);
+    width: calc(20 * $spacing);
   }
 }
