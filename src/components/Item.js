@@ -5,40 +5,51 @@ export default class Item extends Component {
     super(props);
 
     this.state = {
-      selected: props.selected,
       focused: false
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.selected != this.state.selected) {
-      this.setState({
-        selected: nextProps.selected
-      });
-    }
+  get id() {
+    return this.props.idPrefix + "item-" + this.props.id;
   }
 
-  setFocused(focused) {
+  get className() {
+    return `dropdown-item${this.state.focused ? " selected" : ""}`
+  }
+
+  get hasImages() {
+    return this.props.showImages && !!this.props.image;
+  }
+
+  get hasSubtitle() {
+    return !!this.props.subtitle;
+  }
+
+  setFocused(value) {
     this.setState({
-      focused
+      focused: !!value
     });
   }
 
   render() {
-    const { dropdownId, id, image, title, subTitle, handleItemClick, handleItemHover } = this.props;
-    const showImages = this.props.showImages !== false;
-
-    const { selected, focused } = this.state;
-
     return (
-      <div className={`dropdown-item${focused ? " selected": ""}`} id={dropdownId + "-item-" + id} hidden={selected}
-           role="option" tabIndex="-1"
-           onMouseDown={handleItemClick}
-           onMouseMove={handleItemHover}>
-        {showImages && image && <img className="dropdown-item-image" src={image} alt=""/>}
+      <div
+        className={this.className}
+        id={this.id}
+        hidden={this.props.selected}
+        role="option"
+        tabIndex="-1"
+        onMouseDown={this.props.onClick}
+        onMouseMove={this.props.onHover}>
+        {this.hasImages
+        && <img
+          className="dropdown-item-image"
+          src={this.props.image}
+          alt=""/>}
         <div className="dropdown-item-title">
-          {title}
-          {subTitle && <div className="dropdown-item-subtitle">{subTitle}</div>}
+          {this.props.title}
+          {this.hasSubtitle
+          && <div className="dropdown-item-subtitle">{this.props.subTitle}</div>}
         </div>
       </div>
     )
@@ -46,12 +57,17 @@ export default class Item extends Component {
 }
 
 Item.propTypes = {
-  dropdownId: PropTypes.string.isRequired,
+  idPrefix: PropTypes.string.isRequired,
   id: PropTypes.number.isRequired,
+  selected: PropTypes.bool,
   image: PropTypes.string,
   title: PropTypes.string.isRequired,
   subTitle: PropTypes.string,
   showImages: PropTypes.bool,
-  handleItemClick: PropTypes.func.isRequired,
-  handleItemHover: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired,
+  onHover: PropTypes.func.isRequired
+};
+Item.defaultProps = {
+  selected: false,
+  showImages: true
 };

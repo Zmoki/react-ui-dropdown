@@ -1,19 +1,25 @@
 import React, { Component, PropTypes } from "react";
 
 export default class SelectedItem extends Component {
-  render() {
-    const { title, handleItemClick } = this.props;
+  get id() {
+    return this.props.idPrefix + "selected-item";
+  }
 
+  render() {
     return (
-      <div className="dropdown-selected-item">
-        <span className="dropdown-item-title">{title}</span>
-        <button className="dropdown-item-close" type="button" onClick={handleItemClick}>&#215;</button>
+      <div className="dropdown-selected-item" id={this.id}>
+        <span className="dropdown-item-title">{this.props.title}</span>
+        <button
+          className="dropdown-item-close"
+          type="button"
+          onClick={this.props.onClick}>{String.fromCharCode(215)}</button>
       </div>
     )
   }
 }
 
 SelectedItem.propTypes = {
+  idPrefix: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  handleItemClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired
 };

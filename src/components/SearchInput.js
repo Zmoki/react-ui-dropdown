@@ -1,25 +1,42 @@
 import React, { Component, PropTypes } from "react";
 
 export default class SearchInput extends Component {
-  render() {
-    const { dropdownId, value, placeholder, handleChange, handleFocus, handleKeyDown  } = this.props;
+  get id() {
+    return this.props.idPrefix + "search-input";
+  }
 
+  get itemsId() {
+    return this.props.idPrefix + "items";
+  }
+
+  render() {
     return (
-      <input className="dropdown-search-input" id={dropdownId + "-search"} value={value} placeholder={placeholder}
-             role="combobox" aria-autocomplete="list" aria-owns={dropdownId + "-items"}
-             onChange={handleChange}
-             onFocus={handleFocus}
-             onBlur={handleFocus}
-             onKeyDown={handleKeyDown}/>
+      <input
+        className="dropdown-search-input"
+        id={this.id}
+        value={this.props.value}
+        placeholder={this.props.placeholder}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-owns={this.itemsId}
+        onChange={this.props.onChange}
+        onFocus={this.props.onFocus}
+        onBlur={this.props.onBlur}
+        onKeyDown={this.props.onKeyDown}/>
     )
   }
 }
 
 SearchInput.propTypes = {
-  dropdownId: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleFocus: PropTypes.func.isRequired,
-  handleKeyDown: PropTypes.func.isRequired
+  idPrefix: PropTypes.string.isRequired,
+  value: PropTypes.string,
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  onFocus: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
+  onKeyDown: PropTypes.func.isRequired
+};
+SearchInput.defaultProps = {
+  value: "",
+  placeholder: ""
 };

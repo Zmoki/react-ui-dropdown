@@ -9,22 +9,29 @@ export default class Items extends Component {
     }
   }
 
-  toggleHidden(callback) {
-    let isHidden = !this.state.hidden;
+  get id() {
+    return this.props.idPrefix + "items";
+  }
 
-    callback(isHidden);
+  get focusedItemId() {
+    return this.props.focusedItem ? this.props.idPrefix + "item-" + this.props.focusedItem : "";
+  }
 
+  setHidden(value) {
     this.setState({
-      hidden: isHidden
+      hidden: !!value
     });
   }
 
   render() {
-    const { dropdownId, focusedItem } = this.props;
-
     return (
-      <div className="dropdown-items" id={dropdownId + "-items"} hidden={this.state.hidden}
-           role="listbox" tabIndex="-1" aria-activedescendant={focusedItem && dropdownId + "-item-" + focusedItem}>
+      <div
+        className="dropdown-items"
+        id={this.id}
+        hidden={this.state.hidden}
+        role="listbox"
+        tabIndex="-1"
+        aria-activedescendant={this.focusedItemId}>
         {this.props.children}
       </div>
     )
@@ -32,7 +39,7 @@ export default class Items extends Component {
 }
 
 Items.propTypes = {
-  dropdownId: PropTypes.string.isRequired,
+  idPrefix: PropTypes.string.isRequired,
   focusedItem: PropTypes.oneOfType([
     React.PropTypes.number,
     React.PropTypes.string

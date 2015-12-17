@@ -3,6 +3,7 @@ import "./stylesheets/react-ui-dropdown.css";
 import React, { Component, PropTypes } from "react";
 import Items from "./Items";
 import Item from "./Item";
+import Label from "./Label";
 import SearchInput from "./SearchInput";
 import SelectedItem from "./SelectedItem";
 
@@ -56,24 +57,18 @@ export default class ReactUIDropdown extends Component {
   constructor(props) {
     super(props);
 
-    const maxDisplayedItems = props.maxDisplayedItems || 10;
-    const items = this.getItemsFromData(props.items, maxDisplayedItems);
+    const items = this.transformArrayToItems(props.initialItems);
 
     this.state = {
-      dropdownId: uniqueId("dropdown-"),
-      maxDisplayedItems,
+      dropdownId: uniqueId("dropdown-") + "-",
       items,
       focusedItem: items.keys.displayed[0] || null,
-      label: props.label || "",
-      placeholder: props.placeholder || "",
-      searchValue: "",
-      multiple: props.multiple !== false,
-      showImages: props.showImages !== false
+      searchValue: ""
     };
   }
 
   componentDidMount() {
-    if (this.props.source && this.props.source.url) {
+    if (this.hasSource) {
       this.sendRequest(this.props.source.url, (xhr) => {
         const response = JSON.parse(xhr.responseText);
 
@@ -81,7 +76,7 @@ export default class ReactUIDropdown extends Component {
           return;
         }
 
-        const items = this.getItemsFromData(response.items);
+        const items = this.transformArrayToItems(response.items);
 
         this.setState({
           items,
@@ -108,15 +103,108 @@ export default class ReactUIDropdown extends Component {
   }
 
   /**
+   * Return keys of displayed items from state, which not selected.
+   *
+   * @returns {Array}
+   */
+  get notSelectedItems() {
+    return this.state.items.keys.displayed.filter(itemKey => !~this.state.items.keys.selected.indexOf(itemKey));
+  }
+
+  /**
+   * Has component a source or not.
+   *
+   * @returns {boolean}
+   */
+  get hasSource() {
+    return !!this.props.source && this.props.source.url;
+  }
+
+  handleSearchInputChange(e) {
+    const searchValue = e.target.value;
+
+    this.setState({
+      searchValue
+    });
+
+    const updateState = (displayedItemsKeys) => {
+      let items = this.state.items;
+      items.keys.displayed = displayedItemsKeys;
+
+      this.setState({
+        items,
+        focusedItem: items.keys.displayed.filter(itemKey => !~items.keys.selected.indexOf(itemKey))[0] || null
+      });
+    };
+
+    if (!searchValue.length) {
+      updateState(this.state.items.keys.started);
+      return;
+    }
+
+    this.goSearch(searchValue, foundItemsKeys => {
+      updateState(foundItemsKeys.slice(0, this.props.maxDisplayedItems));
+    });
+  }
+
+  handleSearchInputKeyDown(e) {
+    const focusedItem = this.state.focusedItem;
+    const displayedItems = this.notSelectedItems;
+    const focusedItemIndex = displayedItems.indexOf(focusedItem);
+    const updateState = (focusedItemIndex) => {
+      this.setState({
+        focusedItem: displayedItems[focusedItemIndex] || null
+      });
+    };
+
+    switch (e.key) {
+      case "ArrowDown":
+        updateState(focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : 0);
+        break;
+      case "ArrowUp":
+        updateState((focusedItemIndex == 0) ? (displayedItems.length - 1) : (focusedItemIndex - 1));
+        break;
+      case "Enter":
+        this.addItemToSelected(focusedItem);
+
+        updateState(focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : (focusedItemIndex - 1));
+        break;
+    }
+  }
+
+  handleSearchInputFocus() {
+    this.refs.items.setHidden(false);
+    this.setState({
+      focusedItem: this.notSelectedItems[0] || null
+    });
+  }
+
+  handleSearchInputBlur() {
+    this.refs.items.setHidden(true);
+  }
+
+  handleSelectedItemClick(itemKey) {
+    this.removeItemFromSelected(itemKey);
+  }
+
+  handleItemClick(itemKey) {
+    this.addItemToSelected(itemKey);
+  }
+
+  handleItemHover(itemKey) {
+    if (this.state.focusedItem == itemKey) return;
+    this.setState({
+      focusedItem: itemKey
+    });
+  }
+
+  /**
    * Transform array of data for suitable collection of items.
    *
    * @param {Array} data
-   * @param {Number} maxDisplayedItems
    * @returns {{collection: {}, keys: {all: Array, started: Array, displayed: Array, selected: Array}}}
    */
-  getItemsFromData(data, maxDisplayedItems) {
-    maxDisplayedItems = maxDisplayedItems || this.state.maxDisplayedItems;
-
+  transformArrayToItems(data) {
     let items = {
       collection: {},
       keys: {
@@ -129,7 +217,7 @@ export default class ReactUIDropdown extends Component {
 
     if (data && data.length) {
       items.keys.all = data.map(item => item.id);
-      items.keys.started = items.keys.displayed = items.keys.all.slice(0, maxDisplayedItems);
+      items.keys.started = items.keys.displayed = items.keys.all.slice(0, this.props.maxDisplayedItems);
       items.collection = data.reduce((obj, item) => {
         obj[item.id] = item;
         return obj;
@@ -140,18 +228,9 @@ export default class ReactUIDropdown extends Component {
   }
 
   /**
-   * Return keys of displayed items from state, which not selected.
-   *
-   * @returns {Array}
-   */
-  getNotSelectedItems() {
-    return this.state.items.keys.displayed.filter(itemKey => !~this.state.items.keys.selected.indexOf(itemKey));
-  }
-
-  /**
    * Function create an ajax GET request to url and give response in callback.
    *
-   * @param {String} url
+   * @param {string} url
    * @param {Function} callback
    */
   sendRequest(url, callback) {
@@ -183,55 +262,9 @@ export default class ReactUIDropdown extends Component {
   }
 
   /**
-   * Add itemKey to array of selected items in state.
-   * If component is multiple, itemKey will be added to array, else will create array contained only one selected item.
-   *
-   * @param {Number} itemKey
-   */
-  addItemToSelected(itemKey) {
-    let items = this.state.items;
-    items.keys.selected = this.state.multiple ? this.state.items.keys.selected.concat(itemKey) : [itemKey];
-
-    this.setState({
-      items
-    });
-  }
-
-  /**
-   * Remove itemKey from array of selected items in state.
-   *
-   * @param {Number} itemKey
-   */
-  removeItemFromSelected(itemKey) {
-    let s = this.state.items.keys.selected;
-
-    s.splice(s.indexOf(itemKey), 1);
-
-    let items = this.state.items;
-    items.keys.selected = s;
-
-    this.setState({
-      items,
-      focusedItem: this.state.items.keys.displayed.filter(itemKey => !~s.indexOf(itemKey))[0]
-    });
-  }
-
-  /**
-   * Update focusedItem in state.
-   *
-   * @param {Number} itemKey
-   */
-  setFocusedItem(itemKey) {
-    if (this.state.focusedItem == itemKey) return;
-    this.setState({
-      focusedItem: itemKey
-    });
-  }
-
-  /**
    * Search item, which contain string like q. Search in local and on server.
    *
-   * @param {String} q
+   * @param {string} q
    * @param {Function} callback
    */
   goSearch(q, callback) {
@@ -246,7 +279,7 @@ export default class ReactUIDropdown extends Component {
       if (itemChecker.check(q, this.state.items.collection[itemKey], fields)) foundItemsKeys.push(itemKey);
     });
 
-    if (!this.props.source || !this.props.source.url) {
+    if (!this.hasSource) {
       callback(foundItemsKeys);
       return;
     }
@@ -264,97 +297,78 @@ export default class ReactUIDropdown extends Component {
   }
 
   /**
-   * Show or hide list of items.
+   * Add itemKey to array of selected items in state.
+   * If component is multiple, itemKey will be added to array, else will create array contained only one selected item.
+   *
+   * @param {number} itemKey
    */
-  toggleItems() {
-    this.refs.items.toggleHidden((isHidden)=> {
-      if(!isHidden) {
-        this.setState({
-          focusedItem: this.getNotSelectedItems()[0] || null
-        });
-      }
-    });
-  }
-
-  handleSearchInputChange(e) {
-    const searchValue = e.target.value;
+  addItemToSelected(itemKey) {
+    let items = this.state.items;
+    items.keys.selected = this.props.multiple ? this.state.items.keys.selected.concat(itemKey) : [itemKey];
 
     this.setState({
-      searchValue
-    });
-
-    const updateState = (displayedItemsKeys) => {
-      let items = this.state.items;
-      items.keys.displayed = displayedItemsKeys;
-
-      this.setState({
-        items,
-        focusedItem: items.keys.displayed.filter(itemKey => !~items.keys.selected.indexOf(itemKey))[0] || null
-      });
-    };
-
-    if (!searchValue.length) {
-      updateState(this.state.items.keys.started);
-      return;
-    }
-
-    this.goSearch(searchValue, foundItemsKeys => {
-      updateState(foundItemsKeys.slice(0, this.state.maxDisplayedItems));
+      items
     });
   }
 
-  handleSearchInputKeyStroke(e) {
-    const focusedItem = this.state.focusedItem;
-    const displayedItems = this.getNotSelectedItems();
-    const focusedItemIndex = displayedItems.indexOf(focusedItem);
-    const updateState = (focusedItemIndex) => {
-      this.setState({
-        focusedItem: displayedItems[focusedItemIndex] || null
-      });
-    };
+  /**
+   * Remove itemKey from array of selected items in state.
+   *
+   * @param {number} itemKey
+   */
+  removeItemFromSelected(itemKey) {
+    let s = this.state.items.keys.selected;
 
-    switch (e.key) {
-      case "ArrowDown":
-        updateState(focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : 0);
-        break;
-      case "ArrowUp":
-        updateState((focusedItemIndex == 0) ? (displayedItems.length - 1) : (focusedItemIndex - 1));
-        break;
-      case "Enter":
-        this.addItemToSelected(focusedItem);
+    s.splice(s.indexOf(itemKey), 1);
 
-        updateState(focusedItemIndex < (displayedItems.length - 1) ? (focusedItemIndex + 1) : (focusedItemIndex - 1));
-        break;
-    }
+    let items = this.state.items;
+    items.keys.selected = s;
+
+    this.setState({
+      items,
+      focusedItem: this.state.items.keys.displayed.filter(itemKey => !~s.indexOf(itemKey))[0]
+    });
   }
 
   render() {
-    const { dropdownId, items, focusedItem, label, placeholder, searchValue, showImages } = this.state;
+    const { dropdownId, items } = this.state;
 
     return (
       <div className="dropdown">
-        <label className="dropdown-label" id={dropdownId + "-label"} htmlFor={dropdownId + "-search"}>
-          {label}
-        </label>
+        <Label idPrefix={dropdownId}>{this.props.label}</Label>
 
         <div className="dropdown-selector">
           {items.keys.selected.map(itemKey =>
-            <SelectedItem key={itemKey} {...items.collection[itemKey]}
-                          handleItemClick={this.removeItemFromSelected.bind(this, itemKey)}/>)}
+            <SelectedItem
+              key={itemKey}
+              idPrefix={dropdownId}
+              {...items.collection[itemKey]}
+              onClick={this.handleSelectedItemClick.bind(this, itemKey)}/>)}
 
-          <SearchInput dropdownId={dropdownId} value={searchValue} placeholder={placeholder}
-                       handleChange={this.handleSearchInputChange.bind(this)}
-                       handleFocus={this.toggleItems.bind(this)}
-                       handleKeyDown={this.handleSearchInputKeyStroke.bind(this)}/>
+          <SearchInput
+            idPrefix={dropdownId}
+            value={this.state.searchValue}
+            placeholder={this.props.placeholder}
+            onChange={this.handleSearchInputChange.bind(this)}
+            onFocus={this.handleSearchInputFocus.bind(this)}
+            onBlur={this.handleSearchInputBlur.bind(this)}
+            onKeyDown={this.handleSearchInputKeyDown.bind(this)}/>
         </div>
 
-        <Items ref="items" dropdownId={dropdownId} focusedItem={focusedItem}>
+        <Items
+          ref="items"
+          idPrefix={dropdownId}
+          focusedItem={this.state.focusedItem}>
           {items.keys.displayed.map(itemKey =>
-            <Item ref={"item-" + itemKey} key={itemKey} dropdownId={dropdownId} {...items.collection[itemKey]}
-                  selected={~items.keys.selected.indexOf(itemKey)}
-                  showImages={showImages}
-                  handleItemClick={this.addItemToSelected.bind(this, itemKey)}
-                  handleItemHover={this.setFocusedItem.bind(this, itemKey)}/>)}
+            <Item
+              ref={"item-" + itemKey}
+              key={itemKey}
+              idPrefix={dropdownId}
+              {...items.collection[itemKey]}
+              selected={!!~items.keys.selected.indexOf(itemKey)}
+              showImages={this.props.showImages}
+              onClick={this.handleItemClick.bind(this, itemKey)}
+              onHover={this.handleItemHover.bind(this, itemKey)}/>)}
         </Items>
       </div>
     )
@@ -362,7 +376,7 @@ export default class ReactUIDropdown extends Component {
 }
 
 ReactUIDropdown.propTypes = {
-  items: PropTypes.array,
+  initialItems: PropTypes.array,
   source: PropTypes.shape({
     url: React.PropTypes.string,
     searchIn: React.PropTypes.string
@@ -372,4 +386,10 @@ ReactUIDropdown.propTypes = {
   placeholder: PropTypes.string,
   showImages: PropTypes.bool,
   multiple: PropTypes.bool
+};
+ReactUIDropdown.defaultProps = {
+  initialItems: [],
+  maxDisplayedItems: 10,
+  showImages: true,
+  multiple: true
 };
