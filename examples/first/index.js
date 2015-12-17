@@ -31,11 +31,16 @@ xhr.onreadystatechange = function() {
       const response = JSON.parse(xhr.responseText);
 
       if (response.items) {
+        const handleDropdownChange = (selectedItems) => {
+          console.log(selectedItems);
+        };
+
         ReactDOM.render(
           <div>
             <ReactUIDropdown
               label="Items (local search)"
-              initialItems={response.items}/>
+              initialItems={response.items}
+              onChange={handleDropdownChange}/>
             <ReactUIDropdown
               label="Items (local and remote search)"
               initialItems={response.items}

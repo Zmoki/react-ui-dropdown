@@ -187,6 +187,15 @@ export default class ReactUIDropdown extends Component {
     });
   }
 
+  dropdownChange() {
+    if(!this.props.onChange) return;
+
+    this.props.onChange(items.keys.selected.reduce((selectedItems, itemKey) => {
+      selectedItems.push(this.state.items.collection[itemKey]);
+      return selectedItems;
+    }, []));
+  }
+
   /**
    * Transform array of data for suitable collection of items.
    *
@@ -302,6 +311,8 @@ export default class ReactUIDropdown extends Component {
     this.setState({
       items
     });
+
+    this.dropdownChange();
   }
 
   /**
@@ -321,6 +332,8 @@ export default class ReactUIDropdown extends Component {
       items,
       focusedItem: this.state.items.keys.displayed.filter(itemKey => !~s.indexOf(itemKey))[0]
     });
+
+    this.dropdownChange();
   }
 
   render() {
@@ -384,7 +397,8 @@ ReactUIDropdown.propTypes = {
   label: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   showImages: PropTypes.bool,
-  multiple: PropTypes.bool
+  multiple: PropTypes.bool,
+  onChange: PropTypes.func
 };
 ReactUIDropdown.defaultProps = {
   maxDisplayedItems: 10,
