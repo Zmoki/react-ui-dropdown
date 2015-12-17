@@ -65,25 +65,6 @@ export default class ReactUIDropdown extends Component {
       focusedItem: items.keys.displayed[0] || null,
       searchValue: ""
     };
-  }
-
-  componentDidMount() {
-    if (this.hasSource) {
-      this.sendRequest(this.props.source.url, (xhr) => {
-        const response = JSON.parse(xhr.responseText);
-
-        if (!response.items || !response.items.length) {
-          return;
-        }
-
-        const items = this.transformArrayToItems(response.items);
-
-        this.setState({
-          items,
-          focusedItem: items.keys.displayed[0] || null
-        });
-      });
-    }
 
     this.sendRequest = debounce(this.sendRequest, 500);
   }
@@ -116,8 +97,8 @@ export default class ReactUIDropdown extends Component {
    *
    * @returns {boolean}
    */
-  get hasSource() {
-    return !!this.props.source && this.props.source.url;
+  get hasRemoteSearch() {
+    return !!(this.props.remoteSearch && this.props.remoteSearch.url);
   }
 
   handleSearchInputChange(e) {
@@ -177,10 +158,14 @@ export default class ReactUIDropdown extends Component {
     this.setState({
       focusedItem: this.notSelectedItems[0] || null
     });
+    let item = this.refs["item-" + this.state.focusedItem];
+    if (item) item.setFocused(true);
   }
 
   handleSearchInputBlur() {
     this.refs.items.setHidden(true);
+    let item = this.refs["item-" + this.state.focusedItem];
+    if (item) item.setFocused(false);
   }
 
   handleSelectedItemClick(itemKey) {
@@ -279,12 +264,12 @@ export default class ReactUIDropdown extends Component {
       if (itemChecker.check(q, this.state.items.collection[itemKey], fields)) foundItemsKeys.push(itemKey);
     });
 
-    if (!this.hasSource) {
+    if (!this.hasRemoteSearch) {
       callback(foundItemsKeys);
       return;
     }
 
-    this.sendRequest(`${this.props.source.url}?q=${q}&search_in=${this.props.source.searchIn}`, (xhr) => {
+    this.sendRequest(`${this.props.remoteSearch.url}?q=${q}&search_in=${this.props.remoteSearch.fields}`, (xhr) => {
       const response = JSON.parse(xhr.responseText);
       const serverFoundItemsKeys = response.items.map(item => item.id);
 
@@ -376,10 +361,13 @@ export default class ReactUIDropdown extends Component {
 }
 
 ReactUIDropdown.propTypes = {
-  initialItems: PropTypes.array,
-  source: PropTypes.shape({
+  initialItems: PropTypes.array.isRequired,
+  remoteSearch: PropTypes.shape({
     url: React.PropTypes.string,
-    searchIn: React.PropTypes.string
+    fields: React.PropTypes.oneOfType([
+      React.PropTypes.array,
+      React.PropTypes.string
+    ])
   }),
   maxDisplayedItems: PropTypes.number,
   label: PropTypes.string,
@@ -388,7 +376,6 @@ ReactUIDropdown.propTypes = {
   multiple: PropTypes.bool
 };
 ReactUIDropdown.defaultProps = {
-  initialItems: [],
   maxDisplayedItems: 10,
   showImages: true,
   multiple: true
