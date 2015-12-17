@@ -190,7 +190,7 @@ export default class ReactUIDropdown extends Component {
   dropdownChange() {
     if(!this.props.onChange) return;
 
-    this.props.onChange(items.keys.selected.reduce((selectedItems, itemKey) => {
+    this.props.onChange(this.state.items.keys.selected.reduce((selectedItems, itemKey) => {
       selectedItems.push(this.state.items.collection[itemKey]);
       return selectedItems;
     }, []));
