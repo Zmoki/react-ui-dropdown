@@ -101,6 +101,10 @@ export default class ReactUIDropdown extends Component {
     return !!(this.props.remoteSearch && this.props.remoteSearch.url);
   }
 
+  handleSelectorClick() {
+    this.refs.searchInput.refs.input.focus();
+  }
+
   handleSearchInputChange(e) {
     const searchValue = e.target.value;
 
@@ -326,7 +330,9 @@ export default class ReactUIDropdown extends Component {
       <div className="dropdown">
         <Label idPrefix={dropdownId}>{this.props.label}</Label>
 
-        <div className="dropdown-selector">
+        <div
+          className="dropdown-selector"
+          onClick={this.handleSelectorClick.bind(this)}>
           {items.keys.selected.map(itemKey =>
             <SelectedItem
               key={itemKey}
@@ -335,6 +341,7 @@ export default class ReactUIDropdown extends Component {
               onClick={this.handleSelectedItemClick.bind(this, itemKey)}/>)}
 
           <SearchInput
+            ref="searchInput"
             idPrefix={dropdownId}
             value={this.state.searchValue}
             placeholder={this.props.placeholder}

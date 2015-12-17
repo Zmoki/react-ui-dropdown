@@ -12,6 +12,7 @@ export default class SearchInput extends Component {
   render() {
     return (
       <input
+        ref="input"
         className="dropdown-search-input"
         id={this.getId()}
         value={this.props.value}
