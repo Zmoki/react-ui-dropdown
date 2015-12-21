@@ -11,7 +11,7 @@
     "lib",
     "src"
   ],
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "React UI Dropdown — dropdown like in vk.com.",
   "scripts": {
     "clean": "rimraf lib dist",
@@ -35,6 +35,16 @@
     "type": "git",
     "url": "https://github.com/Zmoki/react-ui-dropdown.git"
   },
+  "keywords": [
+    "select",
+    "autocomplete",
+    "typeahead",
+    "dropdown",
+    "multiselect",
+    "react",
+    "reactjs",
+    "react-component"
+  ],
   "author": "Zarema Khalilova",
   "license": "MIT",
   "homepage": "https://github.com/Zmoki/react-ui-dropdown",
