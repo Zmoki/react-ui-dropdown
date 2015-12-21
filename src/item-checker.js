@@ -14,7 +14,7 @@ const itemChecker = {
 
     if (word != currentWord) {
       currentWord = word;
-      currentWords = wordConverter.getConditionalWords(word);
+      currentWords = wordConverter.getConditionalWords(word).map(w => w.replace(/(\[|\]|\(|\)|\\|\.|\^|\$|\||\?|\+)/g, "\\$1"));
     }
 
     fields = (typeof fields == "string") ? [fields] : (fields || Object.keys(item));
