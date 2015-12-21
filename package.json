@@ -11,7 +11,7 @@
     "lib",
     "src"
   ],
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Selection dropdown component using Facebook React.",
   "scripts": {
     "clean": "rimraf lib dist",
