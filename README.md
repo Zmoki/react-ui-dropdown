@@ -1,5 +1,4 @@
 # React UI Dropdown
-Selection dropdown component using Facebook React.
 
 > Now the component is already can be used, but I'm still working on it, and on examples and documentation.
 > If you have any question, please, [create issue](https://github.com/Zmoki/react-ui-dropdown/issues).

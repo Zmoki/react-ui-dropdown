@@ -11,8 +11,8 @@
     "lib",
     "src"
   ],
-  "version": "0.3.2",
-  "description": "React UI Dropdown — dropdown like in vk.com.",
+  "version": "0.3.3",
+  "description": "Selection dropdown component using Facebook React.",
   "scripts": {
     "clean": "rimraf lib dist",
     "lint:js": "eslint src test",
